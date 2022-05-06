@@ -3,8 +3,16 @@ const fs = require('fs/promises');
 const services = require('../../services/courses/courses.services');
 
 const createCourse = async (req, res) => {
-  const { date, certificado, duracion, modules, profesor, telefono, titulo } =
-    req.body;
+  const {
+    date,
+    certificado,
+    duracion,
+    modules,
+    profesor,
+    telefono,
+    titulo,
+    finalPathImg,
+  } = req.body;
 
   const data = {
     date,
@@ -13,21 +21,22 @@ const createCourse = async (req, res) => {
     profesor,
     telefono,
     titulo,
+    pathImage: finalPathImg,
   };
 
-  if (req?.file) {
-    const finalPath = path.join(
-      'images',
-      req.file.filename + '.' + req.file.mimetype.split('/').pop()
-    );
+  // if (req?.file) {
+  //   const finalPath = path.join(
+  //     'images',
+  //     req.file.filename + '.' + req.file.mimetype.split('/').pop()
+  //   );
 
-    const oldPath = req.file.path;
-    const newPAth = req.file.path + '.' + req.file.mimetype.split('/').pop();
+  //   const oldPath = req.file.path;
+  //   const newPAth = req.file.path + '.' + req.file.mimetype.split('/').pop();
 
-    await fs.rename(oldPath, newPAth);
+  //   await fs.rename(oldPath, newPAth);
 
-    data.pathImage = finalPath;
-  }
+  //   data.pathImage = finalPath;
+  // }
 
   const createdCourse = await services.saveNewCourse(data, JSON.parse(modules));
   res.json(createdCourse);
@@ -66,6 +75,7 @@ const updateCourse = async (req, res) => {
     profesor,
     telefono,
     titulo,
+    finalPathImg,
   } = req.body;
 
   const data = {
@@ -78,19 +88,23 @@ const updateCourse = async (req, res) => {
     titulo,
   };
 
-  if (req?.file) {
-    const finalPath = path.join(
-      'images',
-      req.file.filename + '.' + req.file.mimetype.split('/').pop()
-    );
-
-    const oldPath = req.file.path;
-    const newPAth = req.file.path + '.' + req.file.mimetype.split('/').pop();
-
-    await fs.rename(oldPath, newPAth);
-
-    data.pathImage = finalPath;
+  if (finalPathImg) {
+    data.pathImage = finalPathImg;
   }
+
+  // if (req?.file) {
+  //   const finalPath = path.join(
+  //     'images',
+  //     req.file.filename + '.' + req.file.mimetype.split('/').pop()
+  //   );
+
+  //   const oldPath = req.file.path;
+  //   const newPAth = req.file.path + '.' + req.file.mimetype.split('/').pop();
+
+  //   await fs.rename(oldPath, newPAth);
+
+  //   data.pathImage = finalPath;
+  // }
 
   const updatedCourse = await services.updateCourseById(
     data,
