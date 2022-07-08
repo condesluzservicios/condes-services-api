@@ -1,8 +1,8 @@
-const formatRecoveryPassword = (pssword) => {
+const formatRecoveryPassword = (password) => {
   const format = `<main>
     <div>
-        <p><b>Su nueva contraseña es:</b> ${pssword}</p>
-        <p>Inicie sesión con su correo y nueva contraseña. Por seguridad cambiela por una contraseña personalizada</p>
+        <p><b>Su nueva contraseña es:</b> ${password}</p>
+        <p>Inicie sesión con su correo y nueva contraseña. Por seguridad cambiala por una contraseña personalizada</p>
     </div>
     </main>`;
 

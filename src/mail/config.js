@@ -25,6 +25,7 @@ const connectMailer = async ({ email_dest, subject, format }) => {
     // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
   } catch (error) {
     console.log('error al enviar correo', error);
+    return null;
   }
 };
 

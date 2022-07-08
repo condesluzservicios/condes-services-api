@@ -36,6 +36,7 @@ const login = async (req, res) => {
         msg: 'success',
         success: true,
         data: {
+          id: user.data[0]._id,
           email: user.data[0].email,
           name: user.data[0].name,
           last_name: user.data[0].last_name,

@@ -14,14 +14,14 @@ router.post(
   publicController.sendMesaggeContactUs
 );
 
-// proyects public
+// projects public
 router.post(
   '/send-credencials-proyect',
   contactMiddlaware.validateFormatContactUs,
   publicController.sendProyectsCredencials
 );
 
-// credencials public
+// credentials public
 router.post(
   '/send-credencials',
   contactMiddlaware.validateFormatContactUs,
@@ -35,7 +35,7 @@ router.post(
   publicController.sendAgreements
 );
 
-// recover assword
+// recover password
 router.post(
   '/recover-password',
   contactMiddlaware.validateFormatEmail,

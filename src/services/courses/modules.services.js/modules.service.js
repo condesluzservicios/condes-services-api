@@ -27,7 +27,6 @@ const associateModuleToCourse = async (modules, IDCourse) => {
 
 const getModulesAssociatedToCourse = async (courses) => {
   const results = [];
-  const data = [];
 
   try {
     for (const course of courses) {
@@ -37,8 +36,6 @@ const getModulesAssociatedToCourse = async (courses) => {
 
       results.push(module);
     }
-
-    console.log('resultados ->', results);
 
     return {
       msg: 'Moduleos asociados',
