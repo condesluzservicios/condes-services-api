@@ -16,6 +16,7 @@ const connectionDB = async () => {
 const getTypeConnection = async () => {
   const connectType = process.env.MONGODB_CONNECT_TYPE;
   if (connectType == 'REMOTE') return getRemoteURL();
+  if (connectType === 'TEST') return getRemoteURLTest();
   return getLocalURL();
 };
 
@@ -24,6 +25,14 @@ const getRemoteURL = () => {
   const database = process.env.MONGODB_REMOTE_DATABASE;
   const user = process.env.MONGODB_REMOTE_USER;
   const password = process.env.MONGODB_REMOTE_PASSWORD;
+  return `mongodb+srv://${user}:${password}@${server}/${database}?retryWrites=true&w=majority`;
+};
+
+const getRemoteURLTest = () => {
+  const user = process.env.MONGODB_REMOTE_TEST_USER;
+  const password = process.env.MONGODB_REMOTE_TEST_PASSWORD;
+  const server = process.env.MONGODB_REMOTE_TEST_SERVER;
+  const database = process.env.MONGODB_REMOTE_TEST_DATABASE;
   return `mongodb+srv://${user}:${password}@${server}/${database}?retryWrites=true&w=majority`;
 };
 
