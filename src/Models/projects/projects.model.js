@@ -41,9 +41,9 @@ const registerProjectsSchema = new Schema(
       required: true,
     },
     status_project: {
-      type: Boolean,
+      type: String,
       required: true,
-      default: false,
+      default: 'Por aprobar',
     },
 
     // * teach
@@ -165,6 +165,7 @@ const registerProjectsSchema = new Schema(
     program_code: {
       type: String,
       required: false,
+      unique: true,
     },
 
     // * step three

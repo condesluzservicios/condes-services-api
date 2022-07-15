@@ -106,7 +106,7 @@ const registerProjectsStepTwoSchema = yup.object().shape({
   program_code: yup
     .string()
     .matches(
-      /^[a-zA-Zá-üÁ-Ü0-9 ]+$/,
+      /^[a-zA-Zá-üÁ-Ü0-9-]+$/,
       'Introduzca un código del proyecto valido.'
     )
     .required('Código de proyecto es requerido.'),

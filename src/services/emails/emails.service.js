@@ -50,19 +50,22 @@ const sendEmailNotificationProjectCreated = async (idProject) => {
   }
 };
 
-const sendEmailNotificationProjectApproval = async (idProject) => {
+const sendEmailNotificationProjectApproval = async (idProject, unApproval) => {
   try {
     const projectData = await getProjectById(idProject);
 
     const resSendMail = await connectMailer({
       email_dest: projectData.data.email,
       subject: 'Información aprobación de proyecto.',
-      format: formatEmailNotificationApprovalProject(projectData.data),
+      format: formatEmailNotificationApprovalProject(
+        projectData.data,
+        unApproval
+      ),
     });
 
     if (!resSendMail.accepted.length > 0) {
       return {
-        msg: 'Error al enviar correo de registro de proyecto',
+        msg: 'Error al enviar correo de actualización de estado del proyecto',
         success: false,
         data: [],
       };

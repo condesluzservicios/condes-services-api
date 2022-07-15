@@ -211,7 +211,7 @@ const updateApprovalProject = async (data) => {
     const statusProjectUpdated = await ProjectsModel.findByIdAndUpdate(
       data.id,
       {
-        status_project: data.isApproval,
+        status_project: data.isApproval ? 'Aprobado' : 'Desaprobado',
       },
       { upsert: true }
     );
@@ -226,7 +226,10 @@ const updateApprovalProject = async (data) => {
 
     // * envío de correos electrónicos
     const notification =
-      await emailsService.sendEmailNotificationProjectApproval(data.id);
+      await emailsService.sendEmailNotificationProjectApproval(
+        data.id,
+        data.object
+      );
 
     if (notification?.success) {
       return {

@@ -1,12 +1,12 @@
 const formatEmailRegisterProject = (data) => {
   const format = `<main>
-  <img src="https://drive.google.com/file/d/1j5DFdQyTXPsb1EsmhMNs7yDZJj_ttvpa/view" alt="logo-condes">
+  <img src="https://i.ibb.co/7jGPPg1/logo512.png" alt="logo-condes">
   
   <h1>Información de registro de proyecto ${data.title}.</h1>
 
   <div>
     <p>El proyecto con id <b>${
-      data._id
+      data.program_code
     }</b> ha sido registrado exitosanmente.</p>
     
     <p>El proyecto será revisado por el equipo de gestion de proyectos. En los proximos días recibirá un correo informandole el estado de aprobación.</p>
@@ -109,18 +109,22 @@ const formatEmailRegisterProject = (data) => {
 
 module.exports = formatEmailRegisterProject;
 
-const formatEmailNotificationApprovalProject = (data) => {
+const formatEmailNotificationApprovalProject = (data, unApproval) => {
   const format = `<main>
-  <img src="https://drive.google.com/file/d/1j5DFdQyTXPsb1EsmhMNs7yDZJj_ttvpa/view" alt="logo-condes">
+  <img src="https://i.ibb.co/7jGPPg1/logo512.png" alt="logo-condes" />
   
-  <h1>Información de registro de proyecto ${data.title}.</h1>
+  <h1>Información de actualización de proyecto ${data.title}.</h1>
 
   <div>
-    <p>El proyecto con id <b>${data._id}</b> ha sido ${
+    <p>El proyecto con id <b>${data.program_code}</b> ha sido ${
     data.status_project
-      ? 'Aprobado exitosanmente.'
-      : 'Desapronado lamentablemente.'
   }.</p>
+
+    ${
+      unApproval
+        ? `<p><b>Motivo de la desaprobación del proyecto:</b> ${unApproval}</p>`
+        : ''
+    }
       
     <p><b>Registrado por:</b> <span>${data.name} ${data.last_name}</span></p>
 
