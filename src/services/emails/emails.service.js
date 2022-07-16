@@ -1,8 +1,7 @@
 const ProjectsModel = require('../../Models/projects/projects.model');
 const ParticipantsModel = require('../../Models/projects/projectParticipants.model');
 const connectMailer = require('../../mail/config');
-const formatEmailRegisteredProject = require('../../mail/documents/registeredProject');
-const formatEmailNotificationApprovalProject = require('../../mail/documents/registeredProject');
+const formatsEmailsProject = require('../../mail/documents/registeredProject');
 
 const sendEmailNotificationProjectCreated = async (idProject) => {
   try {
@@ -11,7 +10,9 @@ const sendEmailNotificationProjectCreated = async (idProject) => {
     const resSendMail = await connectMailer({
       email_dest: projectData.data.email,
       subject: 'Información registro de proyecto.',
-      format: formatEmailRegisteredProject(projectData.data),
+      format: formatsEmailsProject.formatEmailRegisteredProject(
+        projectData.data
+      ),
     });
 
     if (!resSendMail.accepted.length > 0) {
@@ -24,7 +25,9 @@ const sendEmailNotificationProjectCreated = async (idProject) => {
 
     const resSendMailCondes = await connectMailer({
       subject: 'Información registro de proyecto.',
-      format: formatEmailRegisteredProject(projectData.data),
+      format: formatsEmailsProject.formatEmailRegisteredProject(
+        projectData.data
+      ),
     });
 
     if (!resSendMailCondes.accepted.length > 0) {
@@ -57,7 +60,7 @@ const sendEmailNotificationProjectApproval = async (idProject, unApproval) => {
     const resSendMail = await connectMailer({
       email_dest: projectData.data.email,
       subject: 'Información aprobación de proyecto.',
-      format: formatEmailNotificationApprovalProject(
+      format: formatsEmailsProject.formatEmailNotificationApprovalProject(
         projectData.data,
         unApproval
       ),

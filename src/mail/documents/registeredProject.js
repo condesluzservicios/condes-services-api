@@ -1,4 +1,4 @@
-const formatEmailRegisterProject = (data) => {
+const formatEmailRegisteredProject = (data) => {
   const format = `<main>
   <img src="https://i.ibb.co/7jGPPg1/logo512.png" alt="logo-condes">
   
@@ -107,8 +107,6 @@ const formatEmailRegisterProject = (data) => {
   return format;
 };
 
-module.exports = formatEmailRegisterProject;
-
 const formatEmailNotificationApprovalProject = (data, unApproval) => {
   const format = `<main>
   <img src="https://i.ibb.co/7jGPPg1/logo512.png" alt="logo-condes" />
@@ -191,4 +189,9 @@ const formatEmailNotificationApprovalProject = (data, unApproval) => {
   return format;
 };
 
-module.exports = formatEmailNotificationApprovalProject;
+const formatsEmailsProject = {
+  formatEmailRegisteredProject,
+  formatEmailNotificationApprovalProject,
+};
+
+module.exports = formatsEmailsProject;

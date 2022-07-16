@@ -7,9 +7,10 @@ const saveNewProject = async (req, res) => {
 };
 
 const getPaginationAllProjects = async (req, res) => {
-  const { skip } = req.query;
+  const { skip, flag } = req.query;
   const projectsList = await services.getPaginationAllProjects(
-    Number(skip) || 0
+    Number(skip) || 0,
+    flag
   );
   res.json(projectsList);
 };

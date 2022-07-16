@@ -23,15 +23,31 @@ const createNewProject = async (data) => {
   }
 };
 
-const getPaginationAllProjects = async (skip = 0) => {
+const getPaginationAllProjects = async (skip = 0, flag) => {
+  console.log('flag ------->', flag);
+  let ProjectsList = [];
+  let count = 0;
+
   try {
     skip = (skip - 1) * constants.ITEM_PER_PAG;
 
-    const count = await ProjectsModel.estimatedDocumentCount();
-    const ProjectsList = await ProjectsModel.find()
-      .skip(skip)
-      .limit(constants.ITEM_PER_PAG)
-      .sort({ createdAt: -1 });
+    if (flag === '') {
+      count = await ProjectsModel.estimatedDocumentCount();
+
+      ProjectsList = await ProjectsModel.find()
+        .skip(skip)
+        .limit(constants.ITEM_PER_PAG)
+        .sort({ createdAt: -1 });
+    } else {
+      ProjectsList = await ProjectsModel.find({
+        status_project: { $regex: `^${flag}$`, $options: 'i' },
+      })
+        .skip(skip)
+        .limit(constants.ITEM_PER_PAG)
+        .sort({ createdAt: -1 });
+
+      count = ProjectsList.length;
+    }
 
     const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
 
