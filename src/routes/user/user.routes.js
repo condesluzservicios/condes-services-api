@@ -83,4 +83,10 @@ router.post(
   projectsController.sendEmailNotificationProjectCreated
 );
 
+router.get(
+  '/search-projects',
+  validateToken,
+  projectsController.searchProjectByQuery
+);
+
 module.exports = router;

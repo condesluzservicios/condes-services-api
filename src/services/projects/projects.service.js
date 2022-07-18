@@ -24,7 +24,6 @@ const createNewProject = async (data) => {
 };
 
 const getPaginationAllProjects = async (skip = 0, flag) => {
-  console.log('flag ------->', flag);
   let ProjectsList = [];
   let count = 0;
 
@@ -273,6 +272,58 @@ const updateApprovalProject = async (data) => {
   }
 };
 
+const searchProjectsByQueryFromDb = async (query) => {
+  let result = [];
+  let skip = 1;
+  try {
+    skip = (skip - 1) * constants.ITEM_PER_PAG;
+
+    // const count = await ProjectsModel.estimatedDocumentCount();
+    const projectsList = await ProjectsModel.find({
+      title: { $regex: '.*' + query + '.*', $options: 'i' },
+    })
+      .skip(skip)
+      .limit(constants.ITEM_PER_PAG)
+      .sort({ createdAt: -1 });
+
+    if (projectsList.length > 0) {
+      result = projectsList;
+    } else {
+      const projectsList = await ProjectsModel.find({
+        program_code: { $regex: '.*' + query + '.*', $options: 'i' },
+      })
+        .skip(skip)
+        .limit(constants.ITEM_PER_PAG)
+        .sort({ createdAt: -1 });
+
+      result = projectsList;
+    }
+
+    const pageCount = Math.ceil(result.length / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
+
+    const data = {
+      pagination: {
+        count: result.length,
+        pageCount,
+      },
+      data: result,
+    };
+
+    return {
+      msg: 'Lista de proyectos.',
+      success: true,
+      data: data,
+    };
+  } catch (error) {
+    console.log('error al obtener proyectos ->', error);
+    return {
+      msg: 'Error al obtener proyectos',
+      success: false,
+      data: error,
+    };
+  }
+};
+
 const services = {
   createNewProject,
   getProjectById,
@@ -280,6 +331,7 @@ const services = {
   getPaginationAllProjects,
   updateProject,
   updateApprovalProject,
+  searchProjectsByQueryFromDb,
 };
 
 module.exports = services;

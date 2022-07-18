@@ -65,10 +65,18 @@ const getDataUser = async (email) => {
   }
 };
 
-const getUserList = async () => {
+const getUserList = async (skip = 0) => {
   let result = [];
+
+  skip = (skip - 1) * constants.ITEM_PER_PAG;
+
   try {
-    const userList = await ModelUsers.find();
+    const count = await ModelUsers.estimatedDocumentCount();
+
+    const userList = await ModelUsers.find()
+      .skip(skip)
+      .limit(constants.ITEM_PER_PAG)
+      .sort({ createdAt: -1 });
 
     userList.forEach((item) => {
       let data = {};
@@ -83,10 +91,20 @@ const getUserList = async () => {
       data = {};
     });
 
+    const pageCount = Math.ceil(count / constants.ITEM_PER_PAG);
+
+    const data = {
+      pagination: {
+        count,
+        pageCount,
+      },
+      data: result,
+    };
+
     return {
       msg: 'Datos del usuario.',
       success: true,
-      data: result,
+      data: data,
     };
   } catch (error) {
     console.log('error al obtener lista de usuarios.', error);

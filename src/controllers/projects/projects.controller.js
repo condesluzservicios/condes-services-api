@@ -45,6 +45,12 @@ const sendEmailNotificationProjectCreated = async (req, res) => {
   res.json(response);
 };
 
+const searchProjectByQuery = async (req, res) => {
+  const { query } = req.query;
+  const projectsList = await services.searchProjectsByQueryFromDb(query);
+  res.json(projectsList);
+};
+
 const controllers = {
   saveNewProject,
   updateProject,
@@ -52,6 +58,7 @@ const controllers = {
   getPaginationAllProjects,
   getProjectById,
   updateStatusProject,
+  searchProjectByQuery,
   // ------------------------
   sendEmailNotificationProjectCreated,
 };

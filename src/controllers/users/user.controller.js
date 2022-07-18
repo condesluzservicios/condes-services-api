@@ -102,7 +102,8 @@ const searchUsers = async (req, res) => {
 };
 
 const getAllUser = async (req, res) => {
-  const userList = await services.getUserList();
+  const { skip } = req.query;
+  const userList = await services.getUserList(Number(skip) || 0);
   res.json(userList);
 };
 
