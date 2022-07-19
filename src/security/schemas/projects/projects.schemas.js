@@ -91,7 +91,7 @@ const registerProjectsStepTwoSchema = yup.object().shape({
   line_research: yup
     .string()
     .matches(
-      /^[a-zA-Zá-üÁ-Ü ]+$/,
+      /^[a-zA-Zá-üÁ-Ü , ]+$/,
       'Introduzca una línea de investigación valida.'
     )
     .required('Línea de investigación es requerido.'),
