@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { Schema, model } = mongoose;
+const { Types, Schema, model } = mongoose;
 
 const eventsSchema = new Schema(
   {
@@ -7,7 +7,7 @@ const eventsSchema = new Schema(
       type: String,
     },
     author: {
-      type: String,
+      type: Types.ObjectId,
     },
     site: {
       type: String,

@@ -1,32 +1,7 @@
-const path = require('path');
-const fs = require('fs/promises');
 const services = require('../../services/events/events.services');
 
 const createEvent = async (req, res) => {
-  const { titulo, author, contenido, finalPathImg } = req.body;
-
-  const data = {
-    title: titulo,
-    author,
-    content: contenido,
-    pathImage: finalPathImg,
-  };
-
-  // if (req?.file) {
-  //   const finalPath = path.join(
-  //     'images',
-  //     req.file.filename + '.' + req.file.mimetype.split('/').pop()
-  //   );
-
-  //   const oldPath = req.file.path;
-  //   const newPAth = req.file.path + '.' + req.file.mimetype.split('/').pop();
-
-  //   await fs.rename(oldPath, newPAth);
-
-  //   data.pathImage = finalPath;
-  // }
-
-  const createdEvent = await services.saveNewEvent(data);
+  const createdEvent = await services.saveNewEvent(req.body);
   res.json(createdEvent);
 };
 
@@ -56,33 +31,7 @@ const searchEventsByTitleAndAuthor = async (req, res) => {
 };
 
 const updateEvent = async (req, res) => {
-  const { id_event, titulo, author, contenido, finalPathImg } = req.body;
-
-  const data = {
-    title: titulo,
-    author,
-    content: contenido,
-  };
-
-  if (finalPathImg) {
-    data.pathImage = finalPathImg;
-  }
-
-  // if (req?.file) {
-  //   const finalPath = path.join(
-  //     'images',
-  //     req.file.filename + '.' + req.file.mimetype.split('/').pop()
-  //   );
-
-  //   const oldPath = req.file.path;
-  //   const newPAth = req.file.path + '.' + req.file.mimetype.split('/').pop();
-
-  //   await fs.rename(oldPath, newPAth);
-
-  //   data.pathImage = finalPath;
-  // }
-
-  const updatedEvent = await services.updateEventsById(id_event, data);
+  const updatedEvent = await services.updateEventsById(req.body);
   res.json(updatedEvent);
 };
 

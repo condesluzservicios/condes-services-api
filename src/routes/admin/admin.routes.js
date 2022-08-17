@@ -46,21 +46,11 @@ router.delete('/delete-news', validateToken, newsController.deleteNews);
 router.get('/search-news', validateToken, newsController.getNewsByTitleAuthor);
 
 // events
-router.post(
-  '/create-event',
-  validateToken,
-  upload.single('portada'),
-  eventsController.createEvent
-);
+router.post('/create-event', validateToken, eventsController.createEvent);
 router.get('/get-all-events', eventsController.getAllEvents);
 router.get('/get-events-pagination', eventsController.getEventsPagination);
 router.get('/get-event-by-id', eventsController.getEventById);
-router.put(
-  '/update-event',
-  validateToken,
-  upload.single('portada'),
-  eventsController.updateEvent
-);
+router.put('/update-event', validateToken, eventsController.updateEvent);
 router.delete('/delete-event', validateToken, eventsController.deleteevent);
 router.get(
   '/search-events',

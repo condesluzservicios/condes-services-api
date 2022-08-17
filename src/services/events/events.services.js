@@ -122,11 +122,15 @@ const getEventsById = async (id) => {
   }
 };
 
-const updateEventsById = async (id, data) => {
+const updateEventsById = async (data) => {
   try {
-    const eventsUpdated = await ModelEvents.findByIdAndUpdate(id, data, {
-      upsert: true,
-    });
+    const eventsUpdated = await ModelEvents.findByIdAndUpdate(
+      data.id_event,
+      data,
+      {
+        upsert: true,
+      }
+    );
 
     if (eventsUpdated)
       return {
