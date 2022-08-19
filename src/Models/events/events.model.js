@@ -7,7 +7,7 @@ const eventsSchema = new Schema(
       type: String,
     },
     author: {
-      type: Types.ObjectId,
+      type: String,
     },
     site: {
       type: String,
