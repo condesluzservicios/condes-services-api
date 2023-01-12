@@ -1,6 +1,6 @@
-const yup = require('yup');
+import yup from 'yup';
 
-const contactUsSchema = yup.object().shape({
+export const contactUsSchema = yup.object().shape({
   name: yup
     .string()
     .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'name must be valid format')
@@ -23,13 +23,9 @@ const contactUsSchema = yup.object().shape({
     .required('número es requerido.'),
 });
 
-const emailSchema = yup.object().shape({
+export const emailSchema = yup.object().shape({
   email: yup
     .string('email must be a text')
     .email('email must be a correct format')
     .required('email is required'),
 });
-
-const contactSchemas = { contactUsSchema, emailSchema };
-
-module.exports = contactSchemas;

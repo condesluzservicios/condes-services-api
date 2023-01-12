@@ -1,10 +1,10 @@
-const yup = require('yup');
-const userSchemas = require('../../security/schemas/user.schema');
-const projectsSchemas = require('../../security/schemas/projects/projects.schemas');
-const validateFormats = require('../../security/helpers/validateFormats');
-const services = require('../../services/users/users.services');
+import yup from 'yup';
+import * as userSchemas from '../../security/schemas/user.schema.js';
+import * as projectsSchemas from '../../security/schemas/projects/projects.schemas.js';
+import validateFormats from '../../security/helpers/validateFormats.js';
+import * as services from '../../services/users/users.services.js';
 
-const validateFormatLoginUser = async (req, res, next) => {
+export const validateFormatLoginUser = async (req, res, next) => {
   try {
     const isValid = await validateFormats(
       userSchemas.userLoginSchema,
@@ -29,7 +29,7 @@ const validateFormatLoginUser = async (req, res, next) => {
   }
 };
 
-const validateFormatUpdateUserSignin = async (req, res, next) => {
+export const validateFormatUpdateUserSignin = async (req, res, next) => {
   try {
     const isValid = await validateFormats(
       userSchemas.updateUserSchema,
@@ -54,7 +54,7 @@ const validateFormatUpdateUserSignin = async (req, res, next) => {
   }
 };
 
-const validateExistUser = async (req, res, next) => {
+export const validateExistUser = async (req, res, next) => {
   try {
     const isExist = await services.getUserByEmail(req.body.email);
 
@@ -76,7 +76,7 @@ const validateExistUser = async (req, res, next) => {
   }
 };
 
-const validateDataUser = async (req, res, next) => {
+export const validateDataUser = async (req, res, next) => {
   try {
     if (!req.body.id) {
       return res.json({
@@ -147,11 +147,13 @@ const validateDataUser = async (req, res, next) => {
   }
 };
 
-const validateDataProjectStepOne = async (req, res, next) => {
+export const validateDataProjectStepOne = async (req, res, next) => {
+  const body = req.body;
+
   try {
     const isValid = await validateFormats(
       projectsSchemas.registerProjectsStepOneSchema,
-      req.body
+      body
     );
 
     if (!isValid)
@@ -172,7 +174,7 @@ const validateDataProjectStepOne = async (req, res, next) => {
   }
 };
 
-const validateDataProjectBySteps = async (req, res, next) => {
+export const validateDataProjectBySteps = async (req, res, next) => {
   try {
     const { flag } = req.query;
 
@@ -205,6 +207,14 @@ const validateDataProjectBySteps = async (req, res, next) => {
           .catch(function (err) {
             console.log('v ----------->', err.name, err.errors);
           });
+
+        if (!req.body.chronogram_activities) {
+          isValid = null;
+          console.log(
+            'error ----------->',
+            'debe ingresar un cronograma de actividades.'
+          );
+        }
 
         break;
       }
@@ -252,15 +262,3 @@ const validateDataProjectBySteps = async (req, res, next) => {
     });
   }
 };
-
-const userMiddleware = {
-  validateFormatLoginUser,
-  validateFormatUpdateUserSignin,
-  validateExistUser,
-  validateDataUser,
-  // * projects
-  validateDataProjectStepOne,
-  validateDataProjectBySteps,
-};
-
-module.exports = userMiddleware;

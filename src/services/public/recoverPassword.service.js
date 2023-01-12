@@ -1,11 +1,11 @@
-const ModelUsers = require('../../Models/users/users.model');
-const handlePasswords = require('../../security/users/passwords');
-const userServices = require('../users/users.services');
-const { v4 } = require('uuid');
-const connectMailer = require('../../mail/config');
-const formatRecoveryPassword = require('../../mail/documents/recoverPassword');
+import ModelUsers from '../../Models/users/users.model.js';
+import * as handlePasswords from '../../security/users/passwords.js';
+import * as userServices from '../users/users.services.js';
+import { v4 } from 'uuid';
+import connectMailer from '../../mail/config.js';
+import { formatRecoveryPassword } from '../../mail/documents/recoverPassword.js';
 
-const recoverPassword = async (email) => {
+export const recoverPassword = async (email) => {
   try {
     const user = await userServices.getUserByEmail(email);
 
@@ -53,7 +53,3 @@ const recoverPassword = async (email) => {
     };
   }
 };
-
-const service = { recoverPassword };
-
-module.exports = service;

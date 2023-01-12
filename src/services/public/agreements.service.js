@@ -1,6 +1,6 @@
-const ModelAgreements = require('../../Models/public/agreements.model');
+import ModelAgreements from '../../Models/public/agreements.model.js';
 
-const saveAgreements = async (data) => {
+export const saveAgreements = async (data) => {
   try {
     const newAgreements = new ModelAgreements(data);
     const AgrementsSaved = await newAgreements.save();
@@ -18,7 +18,3 @@ const saveAgreements = async (data) => {
     };
   }
 };
-
-const agreementsServices = { saveAgreements };
-
-module.exports = agreementsServices;

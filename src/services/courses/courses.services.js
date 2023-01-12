@@ -1,9 +1,9 @@
-const constants = require('../../constants/pagination.constants');
-const ModelCourses = require('../../Models/courses/courses.model');
-const ModelModules = require('../../Models/courses/modules.model');
-const modulesServices = require('./modules.services.js/modules.service');
+import { constants } from '../../constants/pagination.constants.js';
+import ModelCourses from '../../Models/courses/courses.model.js';
+import ModelModules from '../../Models/courses/modules.model.js';
+import * as modulesServices from './modules.services.js/modules.service.js';
 
-const saveNewCourse = async (course, modules) => {
+export const saveNewCourse = async (course, modules) => {
   try {
     const newCourse = new ModelCourses(course);
     const savedCourse = await newCourse.save();
@@ -35,7 +35,7 @@ const saveNewCourse = async (course, modules) => {
   }
 };
 
-const getAllCourses = async () => {
+export const getAllCourses = async () => {
   try {
     const coursesList = await ModelCourses.find()
       .skip(0)
@@ -57,7 +57,7 @@ const getAllCourses = async () => {
   }
 };
 
-const getAllCoursesPagination = async (skip = 0) => {
+export const getAllCoursesPagination = async (skip = 0) => {
   try {
     skip = (skip - 1) * constants.ITEM_PER_PAG;
 
@@ -93,7 +93,7 @@ const getAllCoursesPagination = async (skip = 0) => {
   }
 };
 
-const getCourseById = async (id) => {
+export const getCourseById = async (id) => {
   try {
     const coursesList = await ModelCourses.findById(id).populate('modules');
 
@@ -119,7 +119,7 @@ const getCourseById = async (id) => {
   }
 };
 
-const searchCoursesByTitleOrTeacher = async (query) => {
+export const searchCoursesByTitleOrTeacher = async (query) => {
   let result = [];
   let skip = 1;
   try {
@@ -173,7 +173,7 @@ const searchCoursesByTitleOrTeacher = async (query) => {
   }
 };
 
-const updateCourseById = async (course, modules) => {
+export const updateCourseById = async (course, modules) => {
   try {
     let newsModulesSaved = [];
     let modulesupdated = [];
@@ -236,7 +236,7 @@ const updateCourseById = async (course, modules) => {
   }
 };
 
-const deletedCourseById = async (id) => {
+export const deletedCourseById = async (id) => {
   try {
     const deletedCourse = await ModelCourses.findByIdAndDelete({
       _id: id,
@@ -267,15 +267,3 @@ const deletedCourseById = async (id) => {
     };
   }
 };
-
-const services = {
-  saveNewCourse,
-  getAllCourses,
-  getCourseById,
-  getAllCoursesPagination,
-  searchCoursesByTitleOrTeacher,
-  updateCourseById,
-  deletedCourseById,
-};
-
-module.exports = services;

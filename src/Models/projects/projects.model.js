@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const { Types, Schema, models, model } = mongoose;
 
 const registerProjectsSchema = new Schema(
@@ -168,6 +168,12 @@ const registerProjectsSchema = new Schema(
       unique: true,
     },
 
+    project_code: {
+      type: String,
+      required: false,
+      unique: true,
+    },
+
     // * step three
     project_summary: {
       type: String,
@@ -194,7 +200,13 @@ const registerProjectsSchema = new Schema(
       required: false,
     },
     chronogram_activities: {
-      type: String,
+      type: {
+        file: {
+          id: String,
+          url: String,
+        },
+        name: String,
+      },
       required: false,
     },
 
@@ -231,4 +243,4 @@ const registerProjectsSchema = new Schema(
   }
 );
 
-module.exports = models.Projects || model('Projects', registerProjectsSchema);
+export default models.Projects || model('Projects', registerProjectsSchema);

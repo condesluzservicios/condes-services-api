@@ -1,6 +1,6 @@
-const ModelCredencials = require('../../Models/public/credencials.model');
+import ModelCredencials from '../../Models/public/credencials.model.js';
 
-const saveCredencial = async (data) => {
+export const saveCredencial = async (data) => {
   try {
     const newCredentials = new ModelCredencials(data);
     const credencialsSaved = await newCredentials.save();
@@ -18,7 +18,3 @@ const saveCredencial = async (data) => {
     };
   }
 };
-
-const credencialsServices = { saveCredencial };
-
-module.exports = credencialsServices;

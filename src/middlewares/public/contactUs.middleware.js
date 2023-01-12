@@ -1,7 +1,7 @@
-const valdiateFormat = require('../../security/helpers/validateFormats');
-const contactusSchema = require('../../security/schemas/contactUs.schema');
+import valdiateFormat from '../../security/helpers/validateFormats.js';
+import * as contactusSchema from '../../security/schemas/contactUs.schema.js';
 
-const validateFormatContactUs = async (req, res, next) => {
+export const validateFormatContactUs = async (req, res, next) => {
   try {
     const isValid = await valdiateFormat(
       contactusSchema.contactUsSchema,
@@ -26,7 +26,7 @@ const validateFormatContactUs = async (req, res, next) => {
   }
 };
 
-const validateFormatEmail = async (req, res, next) => {
+export const validateFormatEmail = async (req, res, next) => {
   try {
     const isValid = await valdiateFormat(contactusSchema.emailSchema, req.body);
 
@@ -47,7 +47,3 @@ const validateFormatEmail = async (req, res, next) => {
     });
   }
 };
-
-const middleware = { validateFormatContactUs, validateFormatEmail };
-
-module.exports = middleware;

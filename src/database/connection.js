@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
-mongoose.set('bufferCommands', false);
+import mongoose from 'mongoose';
+// mongoose.set('bufferCommands', false);
 
-const connectionDB = async () => {
+export const connectionDB = async () => {
   try {
-    const connection = await mongoose.connect(await getTypeConnection(), {
+    const connection = await mongoose.connect(getTypeConnection(), {
       useUnifiedTopology: true,
       useNewUrlParser: true,
     });
@@ -13,7 +13,7 @@ const connectionDB = async () => {
   }
 };
 
-const getTypeConnection = async () => {
+const getTypeConnection = () => {
   const connectType = process.env.MONGODB_CONNECT_TYPE;
   if (connectType == 'REMOTE') return getRemoteURL();
   if (connectType === 'TEST') return getRemoteURLTest();
@@ -38,5 +38,3 @@ const getRemoteURLTest = () => {
 
 const getLocalURL = () =>
   `mongodb://${process.env.MONGODB_LOCAL_SERVER}/${process.env.MONGODB_LOCAL_DATABASE}`;
-
-connectionDB();

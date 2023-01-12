@@ -1,8 +1,6 @@
-const path = require('path');
-const fs = require('fs/promises');
-const services = require('../../services/courses/courses.services');
+import * as services from '../../services/courses/courses.services.js';
 
-const createCourse = async (req, res) => {
+export const createCourse = async (req, res) => {
   const {
     date,
     certificado,
@@ -24,48 +22,34 @@ const createCourse = async (req, res) => {
     pathImage: finalPathImg,
   };
 
-  // if (req?.file) {
-  //   const finalPath = path.join(
-  //     'images',
-  //     req.file.filename + '.' + req.file.mimetype.split('/').pop()
-  //   );
-
-  //   const oldPath = req.file.path;
-  //   const newPAth = req.file.path + '.' + req.file.mimetype.split('/').pop();
-
-  //   await fs.rename(oldPath, newPAth);
-
-  //   data.pathImage = finalPath;
-  // }
-
   const createdCourse = await services.saveNewCourse(data, JSON.parse(modules));
   res.json(createdCourse);
 };
 
-const getAllCourses = async (req, res) => {
+export const getAllCourses = async (req, res) => {
   const coursesList = await services.getAllCourses();
   res.json(coursesList);
 };
 
-const getAllCoursesPagination = async (req, res) => {
+export const getAllCoursesPagination = async (req, res) => {
   const { skip } = req.query;
   const coursesList = await services.getAllCoursesPagination(Number(skip) || 0);
   res.json(coursesList);
 };
 
-const getCourseById = async (req, res) => {
+export const getCourseById = async (req, res) => {
   const { id } = req.query;
   const course = await services.getCourseById(id);
   res.json(course);
 };
 
-const searchCourseByTitleAndTeacher = async (req, res) => {
+export const searchCourseByTitleAndTeacher = async (req, res) => {
   const { query } = req.query;
   const coursesList = await services.searchCoursesByTitleOrTeacher(query);
   res.json(coursesList);
 };
 
-const updateCourse = async (req, res) => {
+export const updateCourse = async (req, res) => {
   const {
     id_course,
     date,
@@ -113,20 +97,8 @@ const updateCourse = async (req, res) => {
   res.json(updatedCourse);
 };
 
-const deleteCourseById = async (req, res) => {
+export const deleteCourseById = async (req, res) => {
   const { id } = req.query;
   const deletedCourse = await services.deletedCourseById(id);
   res.json(deletedCourse);
 };
-
-const controller = {
-  createCourse,
-  getAllCourses,
-  getAllCoursesPagination,
-  getCourseById,
-  searchCourseByTitleAndTeacher,
-  updateCourse,
-  deleteCourseById,
-};
-
-module.exports = controller;

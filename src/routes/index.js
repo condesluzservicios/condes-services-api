@@ -1,14 +1,13 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const base_url = process.env.SERVER_BASE_ROUTE;
 
 // routes
-const user = require('./user/user.routes');
-const admin = require('./admin/admin.routes');
-const public = require('./public/public.routes');
+import user from './user/user.routes.js';
+import admin from './admin/admin.routes.js';
+import publicRoute from './public/public.routes.js';
 
-router.use(`${base_url}/user`, user);
-router.use(`${base_url}/admin`, admin);
-router.use(`${base_url}/public`, public);
+router.use(`/user`, user);
+router.use(`/admin`, admin);
+router.use(`/public`, publicRoute);
 
-module.exports = router;
+export default router;

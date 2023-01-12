@@ -1,9 +1,7 @@
-const {
-  getTokenFromRequest,
-} = require('../../security/helpers/authorizations');
-const auth = require('../../security/helpers/tokens');
+import { getTokenFromRequest } from '../../security/helpers/authorizations.js';
+import * as auth from '../../security/helpers/tokens.js';
 
-const validateToken = async (req, res, next) => {
+export const validateToken = async (req, res, next) => {
   try {
     const tokenRequest = await getTokenFromRequest(req);
 
@@ -31,5 +29,3 @@ const validateToken = async (req, res, next) => {
     res.json({ error });
   }
 };
-
-module.exports = { validateToken };

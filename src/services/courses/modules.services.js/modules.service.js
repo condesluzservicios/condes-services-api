@@ -1,6 +1,6 @@
-const ModelModulesCourse = require('../../../Models/courses/modules.model');
+import ModelModulesCourse from '../../../Models/courses/modules.model.js';
 
-const associateModuleToCourse = async (modules, IDCourse) => {
+export const associateModuleToCourse = async (modules, IDCourse) => {
   const results = [];
   try {
     for (const module of modules) {
@@ -25,7 +25,7 @@ const associateModuleToCourse = async (modules, IDCourse) => {
   }
 };
 
-const getModulesAssociatedToCourse = async (courses) => {
+export const getModulesAssociatedToCourse = async (courses) => {
   const results = [];
 
   try {
@@ -51,7 +51,3 @@ const getModulesAssociatedToCourse = async (courses) => {
     };
   }
 };
-
-const services = { associateModuleToCourse, getModulesAssociatedToCourse };
-
-module.exports = services;

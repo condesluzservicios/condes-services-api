@@ -1,6 +1,6 @@
-const yup = require('yup');
+import yup from 'yup';
 
-const userLoginSchema = yup.object().shape({
+export const userLoginSchema = yup.object().shape({
   email: yup
     .string('email must be a text')
     .email('email must be a correct format')
@@ -8,7 +8,7 @@ const userLoginSchema = yup.object().shape({
   password: yup.string().required(),
 });
 
-const updateUserSchema = yup.object().shape({
+export const updateUserSchema = yup.object().shape({
   name: yup
     .string()
     .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'name must be valid format')
@@ -22,7 +22,7 @@ const updateUserSchema = yup.object().shape({
   isCompany: yup.boolean(),
 });
 
-const userDataSchema = yup.object().shape({
+export const userDataSchema = yup.object().shape({
   name: yup
     .string()
     .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Debe ingresar un formato valido')
@@ -53,7 +53,7 @@ const userDataSchema = yup.object().shape({
 });
 
 // update data user
-const nameAndLastNameSchema = yup.object().shape({
+export const nameAndLastNameSchema = yup.object().shape({
   name: yup
     .string()
     .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Debe ingresar un nombre valido')
@@ -64,14 +64,14 @@ const nameAndLastNameSchema = yup.object().shape({
     .required('Apellido es requerido'),
 });
 
-const emailSchema = yup.object().shape({
+export const emailSchema = yup.object().shape({
   email: yup
     .string('Correo debe ser texto')
     .email('Ingrese un correo valido')
     .required('Correo electrónico es requerido'),
 });
 
-const passwordsSchema = yup.object().shape({
+export const passwordsSchema = yup.object().shape({
   password: yup
     .string()
     .min(8, 'Se requieren, al menos, 8 caracteres')
@@ -82,15 +82,3 @@ const passwordsSchema = yup.object().shape({
     .required('Por favor repita su contraseña')
     .oneOf([yup.ref('password')], 'Contraseñas no coinciden'),
 });
-
-const userSchemas = {
-  userLoginSchema,
-  updateUserSchema,
-  userDataSchema,
-  // update user from user
-  nameAndLastNameSchema,
-  emailSchema,
-  passwordsSchema,
-};
-
-module.exports = userSchemas;

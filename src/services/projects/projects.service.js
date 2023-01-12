@@ -1,9 +1,11 @@
-const ProjectsModel = require('../../Models/projects/projects.model');
-const ParticipantsModel = require('../../Models/projects/projectParticipants.model');
-const constants = require('../../constants/pagination.constants');
-const emailsService = require('../../services/emails/emails.service');
+import ProjectsModel from '../../Models/projects/projects.model.js';
+import ParticipantsModel from '../../Models/projects/projectParticipants.model.js';
+import * as projectsRepository from '../../repositories/projects.repositories/projects.repository.js';
+import { constants } from '../../constants/pagination.constants.js';
+import * as emailsService from '../../services/emails/emails.service.js';
+import { generateSequentialNumber } from '../../utils/projects.utils.js';
 
-const createNewProject = async (data) => {
+export const createNewProject = async (data) => {
   try {
     const newProject = new ProjectsModel(data);
     const projectSaved = await newProject.save();
@@ -23,7 +25,7 @@ const createNewProject = async (data) => {
   }
 };
 
-const getPaginationAllProjects = async (skip = 0, flag) => {
+export const getPaginationAllProjects = async (skip = 0, flag) => {
   let ProjectsList = [];
   let count = 0;
 
@@ -73,7 +75,7 @@ const getPaginationAllProjects = async (skip = 0, flag) => {
   }
 };
 
-const getProjectById = async (idProject) => {
+export const getProjectById = async (idProject) => {
   try {
     const ProjectsList = await ProjectsModel.findById(idProject);
 
@@ -98,7 +100,7 @@ const getProjectById = async (idProject) => {
   }
 };
 
-const getProjectByIdUser = async (idUser, skip = 0) => {
+export const getProjectByIdUser = async (idUser, skip = 0) => {
   try {
     skip = (skip - 1) * constants.ITEM_PER_PAG;
 
@@ -134,8 +136,25 @@ const getProjectByIdUser = async (idUser, skip = 0) => {
   }
 };
 
-const updateProject = async (data, flag = '') => {
+export const updateProject = async (data, flag = '') => {
   try {
+    if (flag === 'stepTwo') {
+      const amountProjects =
+        await projectsRepository.getAmountProjectsByCategoryProject();
+
+      const code = generateSequentialNumber(amountProjects, data.type_project);
+
+      data.project_code = code;
+
+      const updated = await projectsRepository.updateProject(data.id, data);
+
+      return {
+        success: true,
+        msg: 'Nuevo proyecto actualizado exitosamente.',
+        data: updated,
+      };
+    }
+
     if (flag === 'stepFour') {
       const participants = [];
 
@@ -145,12 +164,9 @@ const updateProject = async (data, flag = '') => {
         participants.push(saved);
       }
 
-      const projectUpdated = await ProjectsModel.findByIdAndUpdate(
+      const projectUpdated = await projectsRepository.updateProject(
         data.id_project,
-        { participants },
-        {
-          upsert: true,
-        }
+        { participants }
       );
 
       return {
@@ -198,12 +214,9 @@ const updateProject = async (data, flag = '') => {
       }
     }
 
-    const projectUpdated = await ProjectsModel.findByIdAndUpdate(
+    const projectUpdated = await projectsRepository.updateProject(
       data.id,
-      data,
-      {
-        upsert: true,
-      }
+      data
     );
 
     return {
@@ -221,7 +234,7 @@ const updateProject = async (data, flag = '') => {
   }
 };
 
-const updateApprovalProject = async (data) => {
+export const updateApprovalProject = async (data) => {
   try {
     const statusProjectUpdated = await ProjectsModel.findByIdAndUpdate(
       data.id,
@@ -272,7 +285,7 @@ const updateApprovalProject = async (data) => {
   }
 };
 
-const searchProjectsByQueryFromDb = async (query) => {
+export const searchProjectsByQueryFromDb = async (query) => {
   let result = [];
   let skip = 1;
   try {
@@ -324,14 +337,5 @@ const searchProjectsByQueryFromDb = async (query) => {
   }
 };
 
-const services = {
-  createNewProject,
-  getProjectById,
-  getProjectByIdUser,
-  getPaginationAllProjects,
-  updateProject,
-  updateApprovalProject,
-  searchProjectsByQueryFromDb,
-};
-
-module.exports = services;
+// helpers
+const generateNewCodeProjectByFlag = async () => {};

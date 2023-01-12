@@ -1,9 +1,9 @@
-const ProjectsModel = require('../../Models/projects/projects.model');
-const ParticipantsModel = require('../../Models/projects/projectParticipants.model');
-const connectMailer = require('../../mail/config');
-const formatsEmailsProject = require('../../mail/documents/registeredProject');
+import ProjectsModel from '../../Models/projects/projects.model.js';
+import ParticipantsModel from '../../Models/projects/projectParticipants.model.js';
+import connectMailer from '../../mail/config.js';
+import * as formatsEmailsProject from '../../mail/documents/registeredProject.js';
 
-const sendEmailNotificationProjectCreated = async (idProject) => {
+export const sendEmailNotificationProjectCreated = async (idProject) => {
   try {
     const projectData = await getProjectById(idProject);
 
@@ -53,7 +53,10 @@ const sendEmailNotificationProjectCreated = async (idProject) => {
   }
 };
 
-const sendEmailNotificationProjectApproval = async (idProject, unApproval) => {
+export const sendEmailNotificationProjectApproval = async (
+  idProject,
+  unApproval
+) => {
   try {
     const projectData = await getProjectById(idProject);
 
@@ -93,7 +96,7 @@ const sendEmailNotificationProjectApproval = async (idProject, unApproval) => {
 };
 
 // * emergency
-const getProjectById = async (idProject) => {
+export const getProjectById = async (idProject) => {
   try {
     const ProjectsList = await ProjectsModel.findById(idProject);
 
@@ -117,10 +120,3 @@ const getProjectById = async (idProject) => {
     };
   }
 };
-
-const services = {
-  sendEmailNotificationProjectCreated,
-  sendEmailNotificationProjectApproval,
-};
-
-module.exports = services;

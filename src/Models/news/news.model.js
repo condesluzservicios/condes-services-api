@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
 const newsSchema = new Schema(
@@ -21,4 +21,4 @@ const newsSchema = new Schema(
   }
 );
 
-module.exports = model('News', newsSchema);
+export default model('News', newsSchema);

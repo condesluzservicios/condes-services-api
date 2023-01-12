@@ -1,4 +1,4 @@
-const formtarContactUs = (data) => {
+export const formtarContactUs = (data) => {
   const { name, last_name, email, country, cod_number, phone, messages } = data;
 
   const format = `<main>
@@ -14,5 +14,3 @@ const formtarContactUs = (data) => {
 
   return format;
 };
-
-module.exports = formtarContactUs;

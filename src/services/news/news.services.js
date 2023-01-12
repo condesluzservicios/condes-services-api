@@ -1,7 +1,7 @@
-const ModelNews = require('../../Models/news/news.model');
-const constants = require('../../constants/pagination.constants');
+import ModelNews from '../../Models/news/news.model.js';
+import { constants } from '../../constants/pagination.constants.js';
 
-const saveNews = async (data) => {
+export const saveNews = async (data) => {
   try {
     const currentNew = new ModelNews(data);
     const newSaved = await currentNew.save();
@@ -28,7 +28,7 @@ const saveNews = async (data) => {
   }
 };
 
-const getAllNews = async () => {
+export const getAllNews = async () => {
   try {
     const newsList = await ModelNews.find();
 
@@ -54,7 +54,7 @@ const getAllNews = async () => {
   }
 };
 
-const getNewsFromDbByPagination = async (skip = 0) => {
+export const getNewsFromDbByPagination = async (skip = 0) => {
   try {
     skip = (skip - 1) * constants.ITEM_PER_PAG;
 
@@ -89,7 +89,7 @@ const getNewsFromDbByPagination = async (skip = 0) => {
   }
 };
 
-const getNewsById = async (id) => {
+export const getNewsById = async (id) => {
   try {
     const news = await ModelNews.findById(id);
 
@@ -115,7 +115,7 @@ const getNewsById = async (id) => {
   }
 };
 
-const updateNewsById = async (id, data) => {
+export const updateNewsById = async (id, data) => {
   try {
     const newsUpdated = await ModelNews.findByIdAndUpdate(id, data, {
       upsert: true,
@@ -135,7 +135,7 @@ const updateNewsById = async (id, data) => {
   }
 };
 
-const deleteNewsById = async (id) => {
+export const deleteNewsById = async (id) => {
   try {
     const newsDeleted = await ModelNews.findByIdAndDelete({ _id: id });
     return {
@@ -153,7 +153,7 @@ const deleteNewsById = async (id) => {
   }
 };
 
-const searchNewsByTitleOrAuthor = async (query) => {
+export const searchNewsByTitleOrAuthor = async (query) => {
   let result = [];
   let skip = 1;
   try {
@@ -204,15 +204,3 @@ const searchNewsByTitleOrAuthor = async (query) => {
     };
   }
 };
-
-const services = {
-  saveNews,
-  getAllNews,
-  getNewsFromDbByPagination,
-  getNewsById,
-  searchNewsByTitleOrAuthor,
-  updateNewsById,
-  deleteNewsById,
-};
-
-module.exports = services;

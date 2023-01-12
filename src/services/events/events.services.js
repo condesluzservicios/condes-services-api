@@ -1,7 +1,7 @@
-const constants = require('../../constants/pagination.constants');
-const ModelEvents = require('../../Models/events/events.model');
+import { constants } from '../../constants/pagination.constants.js';
+import ModelEvents from '../../Models/events/events.model.js';
 
-const saveNewEvent = async (data) => {
+export const saveNewEvent = async (data) => {
   try {
     const newEvent = new ModelEvents(data);
     const savedEvent = await newEvent.save();
@@ -28,7 +28,7 @@ const saveNewEvent = async (data) => {
   }
 };
 
-const getAllEvents = async () => {
+export const getAllEvents = async () => {
   try {
     const eventsList = await ModelEvents.find().skip(0).limit(6);
 
@@ -54,7 +54,7 @@ const getAllEvents = async () => {
   }
 };
 
-const getEventsFromDbByPagination = async (skip = 0) => {
+export const getEventsFromDbByPagination = async (skip = 0) => {
   try {
     skip = (skip - 1) * constants.ITEM_PER_PAG;
 
@@ -96,7 +96,7 @@ const getEventsFromDbByPagination = async (skip = 0) => {
   }
 };
 
-const getEventsById = async (id) => {
+export const getEventsById = async (id) => {
   try {
     const eventsList = await ModelEvents.findById(id);
 
@@ -122,7 +122,7 @@ const getEventsById = async (id) => {
   }
 };
 
-const updateEventsById = async (data) => {
+export const updateEventsById = async (data) => {
   try {
     const eventsUpdated = await ModelEvents.findByIdAndUpdate(
       data.id_event,
@@ -154,7 +154,7 @@ const updateEventsById = async (data) => {
   }
 };
 
-const searchEventsByTitleOrAuthor = async (query) => {
+export const searchEventsByTitleOrAuthor = async (query) => {
   let result = [];
   let skip = 1;
   try {
@@ -206,7 +206,7 @@ const searchEventsByTitleOrAuthor = async (query) => {
   }
 };
 
-const deletedEvents = async (id) => {
+export const deletedEvents = async (id) => {
   try {
     const deletedEvent = await ModelEvents.findByIdAndDelete({ _id: id });
 
@@ -231,15 +231,3 @@ const deletedEvents = async (id) => {
     };
   }
 };
-
-const services = {
-  saveNewEvent,
-  getAllEvents,
-  getEventsFromDbByPagination,
-  getEventsById,
-  searchEventsByTitleOrAuthor,
-  updateEventsById,
-  deletedEvents,
-};
-
-module.exports = services;

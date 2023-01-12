@@ -1,11 +1,10 @@
-const constants = require('../../constants/pagination.constants');
-const ModelUsers = require('../../Models/users/users.model');
-const { createHash } = require('../../security/users/passwords');
-const handlePasswords = require('../../security/users/passwords');
+import { constants } from '../../constants/pagination.constants.js';
+import ModelUsers from '../../Models/users/users.model.js';
+import { createHash } from '../../security/users/passwords.js';
 
-const SaveNewUser = async (data) => {
+export const SaveNewUser = async (data) => {
   try {
-    const newPassword = await handlePasswords.createHash(data.password);
+    const newPassword = await createHash(data.password);
     data.password = newPassword;
 
     const newUser = new ModelUsers(data);
@@ -25,7 +24,7 @@ const SaveNewUser = async (data) => {
   }
 };
 
-const updateUserSignin = async (data) => {
+export const updateUserSignin = async (data) => {
   try {
     const userUpdated = await ModelUsers.findByIdAndUpdate(data.id, data, {
       upsert: true,
@@ -45,7 +44,7 @@ const updateUserSignin = async (data) => {
   }
 };
 
-const getDataUser = async (email) => {
+export const getDataUser = async (email) => {
   const result = [];
   try {
     const user = await ModelUsers.find(email);
@@ -65,7 +64,7 @@ const getDataUser = async (email) => {
   }
 };
 
-const getUserList = async (skip = 0) => {
+export const getUserList = async (skip = 0) => {
   let result = [];
 
   skip = (skip - 1) * constants.ITEM_PER_PAG;
@@ -116,7 +115,7 @@ const getUserList = async (skip = 0) => {
   }
 };
 
-const updateDataUser = async (data) => {
+export const updateDataUser = async (data) => {
   try {
     const newPassword = await createHash(data.password);
     data.password = newPassword;
@@ -139,7 +138,7 @@ const updateDataUser = async (data) => {
   }
 };
 
-const updateDataUserFromAdmin = async (data) => {
+export const updateDataUserFromAdmin = async (data) => {
   try {
     const userUpdated = await ModelUsers.findByIdAndUpdate(data.id, data, {
       upsert: true,
@@ -159,7 +158,7 @@ const updateDataUserFromAdmin = async (data) => {
   }
 };
 
-const getUserByEmail = async (email) => {
+export const getUserByEmail = async (email) => {
   try {
     const userFinded = await ModelUsers.find({ email });
     return {
@@ -177,7 +176,7 @@ const getUserByEmail = async (email) => {
   }
 };
 
-const getUserByID = async (id) => {
+export const getUserByID = async (id) => {
   let result = [];
 
   try {
@@ -216,7 +215,7 @@ const getUserByID = async (id) => {
   }
 };
 
-const searchUsersByNameOrLastName = async (query) => {
+export const searchUsersByNameOrLastName = async (query) => {
   let result = [];
   let skip = 1;
   try {
@@ -267,17 +266,3 @@ const searchUsersByNameOrLastName = async (query) => {
     };
   }
 };
-
-const services = {
-  SaveNewUser,
-  updateUserSignin,
-  updateDataUser,
-  updateDataUserFromAdmin,
-  getDataUser,
-  getUserList,
-  getUserByEmail,
-  getUserByID,
-  searchUsersByNameOrLastName,
-};
-
-module.exports = services;

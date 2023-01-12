@@ -1,18 +1,18 @@
-const auth = require('../../security/helpers/tokens');
-const handlePasswords = require('../../security/users/passwords');
-const services = require('../../services/users/users.services');
+import * as auth from '../../security/helpers/tokens.js';
+import * as handlePasswords from '../../security/users/passwords.js';
+import * as services from '../../services/users/users.services.js';
 
-const signIn = async (req, res) => {
+export const signIn = async (req, res) => {
   const userSaved = await services.SaveNewUser(req.body);
   res.json(userSaved);
 };
 
-const updateUserSignin = async (req, res) => {
+export const updateUserSignin = async (req, res) => {
   const userUpdated = await services.updateUserSignin(req.body);
   res.json(userUpdated);
 };
 
-const login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const user = await services.getUserByEmail(req.body.email);
 
@@ -61,17 +61,17 @@ const login = async (req, res) => {
   }
 };
 
-const updateDataUser = async (req, res) => {
+export const updateDataUser = async (req, res) => {
   const userUpdated = await services.updateDataUser(req.body);
   res.json(userUpdated);
 };
 
-const updateDataUserFromAdmin = async (req, res) => {
+export const updateDataUserFromAdmin = async (req, res) => {
   const userUpdated = await services.updateDataUserFromAdmin(req.body);
   res.json(userUpdated);
 };
 
-const getDataUser = async (req, res) => {
+export const getDataUser = async (req, res) => {
   const { id } = req.query;
   let result = {};
   let user = await services.getUserByEmail(id);
@@ -89,34 +89,20 @@ const getDataUser = async (req, res) => {
   res.json(user);
 };
 
-const getUserByID = async (req, res) => {
+export const getUserByID = async (req, res) => {
   const { id } = req.query;
   const userData = await services.getUserByID(id);
   res.json(userData);
 };
 
-const searchUsers = async (req, res) => {
+export const searchUsers = async (req, res) => {
   const { query } = req.query;
   const usersList = await services.searchUsersByNameOrLastName(query);
   res.json(usersList);
 };
 
-const getAllUser = async (req, res) => {
+export const getAllUser = async (req, res) => {
   const { skip } = req.query;
   const userList = await services.getUserList(Number(skip) || 0);
   res.json(userList);
 };
-
-const registerController = {
-  signIn,
-  updateUserSignin,
-  updateDataUser,
-  updateDataUserFromAdmin,
-  getDataUser,
-  login,
-  getAllUser,
-  getUserByID,
-  searchUsers,
-};
-
-module.exports = registerController;

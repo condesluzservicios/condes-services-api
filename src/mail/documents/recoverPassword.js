@@ -1,4 +1,4 @@
-const formatRecoveryPassword = (password) => {
+export const formatRecoveryPassword = (password) => {
   const format = `<main>
     <div>
         <p><b>Su nueva contraseña es:</b> ${password}</p>
@@ -8,5 +8,3 @@ const formatRecoveryPassword = (password) => {
 
   return format;
 };
-
-module.exports = formatRecoveryPassword;

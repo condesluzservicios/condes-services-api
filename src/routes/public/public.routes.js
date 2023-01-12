@@ -1,45 +1,48 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
 // middlewares
-const contactMiddlaware = require('../../middlewares/public/contactUs.middleware');
+import {
+  validateFormatContactUs,
+  validateFormatEmail,
+} from '../../middlewares/public/contactUs.middleware.js';
 
 // controllers
-const publicController = require('../../controllers/public/public.controller');
+import * as publicController from '../../controllers/public/public.controller.js';
 
 // contact us
 router.post(
   '/send-contact',
-  contactMiddlaware.validateFormatContactUs,
+  validateFormatContactUs,
   publicController.sendMesaggeContactUs
 );
 
 // projects public
 router.post(
   '/send-credencials-proyect',
-  contactMiddlaware.validateFormatContactUs,
+  validateFormatContactUs,
   publicController.sendProyectsCredencials
 );
 
 // credentials public
 router.post(
   '/send-credencials',
-  contactMiddlaware.validateFormatContactUs,
+  validateFormatContactUs,
   publicController.sendCredencials
 );
 
 // agreements
 router.post(
   '/send-agreements',
-  contactMiddlaware.validateFormatContactUs,
+  validateFormatContactUs,
   publicController.sendAgreements
 );
 
 // recover password
 router.post(
   '/recover-password',
-  contactMiddlaware.validateFormatEmail,
+  validateFormatEmail,
   publicController.recoverPassword
 );
 
-module.exports = router;
+export default router;

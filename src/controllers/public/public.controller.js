@@ -1,11 +1,11 @@
-const credenciaslProyectsServices = require('../../services/public/credencialsProyects.services');
-const credencialsServices = require('../../services/public/credencials.service');
-const agreemrntsServices = require('../../services/public/agreements.service');
-const passwordServices = require('../../services/public/recoverPassword.service');
-const formtarContactUs = require('../../mail/documents/contactUs');
-const connectMailer = require('../../mail/config');
+import * as credenciaslProyectsServices from '../../services/public/credencialsProyects.services.js';
+import * as credencialsServices from '../../services/public/credencials.service.js';
+import * as agreemrntsServices from '../../services/public/agreements.service.js';
+import * as passwordServices from '../../services/public/recoverPassword.service.js';
+import { formtarContactUs } from '../../mail/documents/contactUs.js';
+import connectMailer from '../../mail/config.js';
 
-const sendMesaggeContactUs = async (req, res) => {
+export const sendMesaggeContactUs = async (req, res) => {
   const htmlFormat = formtarContactUs(req.body);
   const resSendMail = await connectMailer({
     subject: 'Formulario de contacto.',
@@ -14,34 +14,24 @@ const sendMesaggeContactUs = async (req, res) => {
   res.json({ msg: 'Enviado.', success: true, data: resSendMail });
 };
 
-const sendProyectsCredencials = async (req, res) => {
+export const sendProyectsCredencials = async (req, res) => {
   const credenciaslProyectsSaved =
     await credenciaslProyectsServices.saveCredencialProyects(req.body);
   res.json(credenciaslProyectsSaved);
 };
 
-const sendCredencials = async (req, res) => {
+export const sendCredencials = async (req, res) => {
   const credenciaslSaved = await credencialsServices.saveCredencial(req.body);
   res.json(credenciaslSaved);
 };
 
-const sendAgreements = async (req, res) => {
+export const sendAgreements = async (req, res) => {
   const agreementsSaved = await agreemrntsServices.saveAgreements(req.body);
   res.json(agreementsSaved);
 };
 
-const recoverPassword = async (req, res) => {
+export const recoverPassword = async (req, res) => {
   const { email } = req.body;
   const user = await passwordServices.recoverPassword(email);
   res.json(user);
 };
-
-const controller = {
-  sendMesaggeContactUs,
-  sendProyectsCredencials,
-  sendCredencials,
-  sendAgreements,
-  recoverPassword,
-};
-
-module.exports = controller;

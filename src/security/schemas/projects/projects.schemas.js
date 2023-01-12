@@ -1,6 +1,6 @@
-const yup = require('yup');
+import yup from 'yup';
 
-const registerProjectsStepOneSchema = yup.object().shape({
+export const registerProjectsStepOneSchema = yup.object().shape({
   personal_type: yup
     .string('Ingrese que tipo de personal')
     .typeError('Ingrese que tipo de personal')
@@ -75,7 +75,7 @@ const registerProjectsStepOneSchema = yup.object().shape({
     .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Introduzca una dedicación valida.'),
 });
 
-const registerProjectsStepTwoSchema = yup.object().shape({
+export const registerProjectsStepTwoSchema = yup.object().shape({
   title: yup
     .string()
     .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Introduzca un titulo valido.')
@@ -84,10 +84,10 @@ const registerProjectsStepTwoSchema = yup.object().shape({
     .string()
     .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Introduzca un tipo de proyecto valido.')
     .required('Tipo de proyecto es requerido.'),
-  project_area: yup
-    .string()
-    .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Introduzca un area de proyecto valido.')
-    .required('Area de proyecto es requerido.'),
+  // project_area: yup
+  //   .string()
+  //   .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Introduzca un area de proyecto valido.')
+  //   .required('Area de proyecto es requerido.'),
   line_research: yup
     .string()
     .matches(
@@ -103,49 +103,52 @@ const registerProjectsStepTwoSchema = yup.object().shape({
     )
     .typeError('Tipo de investigación es requerido.')
     .required('Tipo de investigación es requerido.'),
-  program_code: yup
-    .string()
-    .matches(
-      /^[a-zA-Zá-üÁ-Ü0-9-]+$/,
-      'Introduzca un código del proyecto valido.'
-    )
-    .required('Código de proyecto es requerido.'),
+  // program_code: yup
+  //   .string()
+  //   .matches(
+  //     /^[a-zA-Zá-üÁ-Ü0-9-]+$/,
+  //     'Introduzca un código del proyecto valido.'
+  //   )
+  //   .required('Código de proyecto es requerido.'),
 });
 
-const registerProjectsStepThreeSchema = yup.object().shape({
+export const registerProjectsStepThreeSchema = yup.object().shape({
   project_summary: yup
     .string()
-    .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Introduzca un resumen de proyecto.')
+    .matches(/^[a-zA-Zá-üÁ-Ü;,.0-9 ]+$/, 'Introduzca un resumen de proyecto.')
     .required('Resumen del proyecto es requerido.'),
   general_objective: yup
     .string()
-    .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Introduzca un objetivo general.')
+    .matches(/^[a-zA-Zá-üÁ-Ü;,.0-9 ]+$/, 'Introduzca un objetivo general.')
     .required('Objetivo general es requerido.'),
   specific_objectives: yup
     .string()
-    .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Introduzca objetivos especificos.')
+    .matches(/^[a-zA-Zá-üÁ-Ü;,.0-9 ]+$/, 'Introduzca objetivos especificos.')
     .required('Objetivos especificos son requeridos.'),
   // hypothesis: yup
   //   .string()
-  //   .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Introduzca una hipotesís especificos.'),
+  //   .matches(/^[a-zA-Zá-üÁ-Ü;,.0-9 ]+$/, 'Introduzca una hipotesís especificos.'),
   methodology_used: yup
     .string()
-    .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Introduzca una metodología valida.')
+    .matches(/^[a-zA-Zá-üÁ-Ü;,.0-9 ]+$/, 'Introduzca una metodología valida.')
     .required('Metodología es requerida.'),
   feasibility_research: yup
     .string()
-    .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Debe ingresar la viabilidad del proyecto.')
-    .required('La viabilidad del proyecto es requerida.'),
-  chronogram_activities: yup
-    .string()
     .matches(
-      /^[a-zA-Zá-üÁ-Ü ]+$/,
-      'Debe ingresar un cronograma de actividades.'
+      /^[a-zA-Zá-üÁ-Ü;,.0-9 ]+$/,
+      'Debe ingresar la viabilidad del proyecto.'
     )
-    .required('Cronograma es requerida.'),
+    .required('La viabilidad del proyecto es requerida.'),
+  // chronogram_activities: yup
+  //   .string()
+  //   .matches(
+  //     /^[a-zA-Zá-üÁ-Ü;,.0-9 ]+$/,
+  //     'Debe ingresar un cronograma de actividades.'
+  //   )
+  //   .required('Cronograma es requerida.'),
 });
 
-const projectParticipantsSchema = yup.object().shape({
+export const projectParticipantsSchema = yup.object().shape({
   name: yup
     .string()
     .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Introduzca un nombre.')
@@ -221,12 +224,3 @@ const projectParticipantsSchema = yup.object().shape({
     .matches(/^[-a-zA-Zá-üÁ-Ü ]+$/, 'Introduzca una posición.')
     .required('Posición es requerida.'),
 });
-
-const validations = {
-  registerProjectsStepOneSchema,
-  registerProjectsStepTwoSchema,
-  registerProjectsStepThreeSchema,
-  projectParticipantsSchema,
-};
-
-module.exports = validations;

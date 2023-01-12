@@ -1,38 +1,50 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const userController = require('../../controllers/users/user.controller');
-const projectsController = require('../../controllers/projects/projects.controller');
-const userMiddleware = require('../../middlewares/users/validateUser.middleware');
-const {
-  validateToken,
-} = require('../../middlewares/admin/verificateToken.middleware');
 
-router.post(
-  '/signin',
-  userMiddleware.validateFormatLoginUser,
-  userMiddleware.validateExistUser,
-  userController.signIn
-);
+import {
+  signIn,
+  updateUserSignin,
+  login,
+  getDataUser,
+  updateDataUser,
+} from '../../controllers/users/user.controller.js';
+import {
+  saveNewProject,
+  getPaginationAllProjects,
+  getProjectById,
+  getProjectByIdUser,
+  updateProject,
+  updateStatusProject,
+  sendEmailNotificationProjectCreated,
+  searchProjectByQuery,
+} from '../../controllers/projects/projects.controller.js';
+import {
+  validateFormatLoginUser,
+  validateExistUser,
+  validateFormatUpdateUserSignin,
+  validateDataUser,
+  validateDataProjectStepOne,
+  validateDataProjectBySteps,
+} from '../../middlewares/users/validateUser.middleware.js';
+import { validateToken } from '../../middlewares/admin/verificateToken.middleware.js';
+
+router.post('/signin', validateFormatLoginUser, validateExistUser, signIn);
 
 router.put(
   '/update-sigin-user',
-  userMiddleware.validateFormatUpdateUserSignin,
-  userController.updateUserSignin
+  validateFormatUpdateUserSignin,
+  updateUserSignin
 );
 
-router.post(
-  '/login',
-  userMiddleware.validateFormatLoginUser,
-  userController.login
-);
+router.post('/login', validateFormatLoginUser, login);
 
-router.get('/get-data-user', validateToken, userController.getDataUser);
+router.get('/get-data-user', validateToken, getDataUser);
 
 router.put(
   '/update-data-user',
   validateToken,
-  userMiddleware.validateDataUser,
-  userController.updateDataUser
+  validateDataUser,
+  updateDataUser
 );
 
 // * projects register
@@ -42,51 +54,31 @@ router.put(
 router.post(
   '/register-project',
   validateToken,
-  userMiddleware.validateDataProjectStepOne,
-  projectsController.saveNewProject
+  validateDataProjectStepOne,
+  saveNewProject
 );
 
 router.get(
   '/get-all-projects-pagination',
   validateToken,
-  projectsController.getPaginationAllProjects
+  getPaginationAllProjects
 );
 
-router.get(
-  '/get-project-by-id',
-  validateToken,
-  projectsController.getProjectById
-);
+router.get('/get-project-by-id', validateToken, getProjectById);
 
-router.get(
-  '/get-projects-by-id-user',
-  validateToken,
-  projectsController.getProjectByIdUser
-);
+router.get('/get-projects-by-id-user', validateToken, getProjectByIdUser);
 
 router.put(
   '/update-project',
   validateToken,
-  userMiddleware.validateDataProjectBySteps,
-  projectsController.updateProject
+  validateDataProjectBySteps,
+  updateProject
 );
 
-router.put(
-  '/update-approval-project',
-  validateToken,
-  projectsController.updateStatusProject
-);
+router.put('/update-approval-project', validateToken, updateStatusProject);
 
-router.post(
-  '/test-emails',
-  validateToken,
-  projectsController.sendEmailNotificationProjectCreated
-);
+router.post('/test-emails', validateToken, sendEmailNotificationProjectCreated);
 
-router.get(
-  '/search-projects',
-  validateToken,
-  projectsController.searchProjectByQuery
-);
+router.get('/search-projects', validateToken, searchProjectByQuery);
 
-module.exports = router;
+export default router;

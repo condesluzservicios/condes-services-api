@@ -1,6 +1,6 @@
-const ModelCredencialsProyects = require('../../Models/public/cedencialsProyects.model');
+import ModelCredencialsProyects from '../../Models/public/cedencialsProyects.model.js';
 
-const saveCredencialProyects = async (data) => {
+export const saveCredencialProyects = async (data) => {
   try {
     const newCredentialsProyects = new ModelCredencialsProyects(data);
     const credencialsProyectsSaved = await newCredentialsProyects.save();
@@ -18,7 +18,3 @@ const saveCredencialProyects = async (data) => {
     };
   }
 };
-
-const credencialsProyectsServices = { saveCredencialProyects };
-
-module.exports = credencialsProyectsServices;

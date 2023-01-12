@@ -1,4 +1,4 @@
-const formatEmailRegisteredProject = (data) => {
+export const formatEmailRegisteredProject = (data) => {
   const format = `<main style="font-family: Arial, Helvetica, sans-serif;background-color:gainsboro; display: flex; justify-content:center; align-items: center; flex-direction:column; margin:0px;">
   <img width="150px" src="https://i.ibb.co/7jGPPg1/logo512.png" alt="logo-condes">
   
@@ -107,7 +107,7 @@ const formatEmailRegisteredProject = (data) => {
   return format;
 };
 
-const formatEmailNotificationApprovalProject = (data, unApproval) => {
+export const formatEmailNotificationApprovalProject = (data, unApproval) => {
   const format = `<main style="font-family: Arial, Helvetica, sans-serif;background-color:gainsboro; display: flex; justify-content:center; align-items: center; flex-direction:column; margin:0px;">
   <img width="150px" src="https://i.ibb.co/7jGPPg1/logo512.png" alt="logo-condes" />
   
@@ -188,10 +188,3 @@ const formatEmailNotificationApprovalProject = (data, unApproval) => {
 
   return format;
 };
-
-const formatsEmailsProject = {
-  formatEmailRegisteredProject,
-  formatEmailNotificationApprovalProject,
-};
-
-module.exports = formatsEmailsProject;
