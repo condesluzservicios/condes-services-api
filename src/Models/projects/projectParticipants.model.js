@@ -35,6 +35,11 @@ const projectparticipantsSchema = new Schema(
       type: String,
       required: true,
     },
+    institution_name: {
+      type: String,
+      required: false,
+      default: 'LUZ',
+    },
     position: {
       type: String,
       required: true,
