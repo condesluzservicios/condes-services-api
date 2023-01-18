@@ -7,8 +7,7 @@ import { generateSequentialNumber } from '../../utils/projects.utils.js';
 
 export const createNewProject = async (data) => {
   try {
-    const newProject = new ProjectsModel(data);
-    const projectSaved = await newProject.save();
+    const projectSaved = await projectsRepository.saveNewProject(data);
 
     return {
       success: true,
@@ -26,64 +25,26 @@ export const createNewProject = async (data) => {
 };
 
 export const getPaginationAllProjects = async (skip = 0, flag) => {
-  let ProjectsList = [];
-  let count = 0;
+  const projectsList = await projectsRepository.getProjectsList(skip, flag);
 
-  try {
-    skip = (skip - 1) * constants.ITEM_PER_PAG;
-
-    if (flag === '') {
-      count = await ProjectsModel.estimatedDocumentCount();
-
-      ProjectsList = await ProjectsModel.find()
-        .skip(skip)
-        .limit(constants.ITEM_PER_PAG)
-        .sort({ createdAt: -1 });
-    } else {
-      ProjectsList = await ProjectsModel.find({
-        status_project: { $regex: `^${flag}$`, $options: 'i' },
-      })
-        .skip(skip)
-        .limit(constants.ITEM_PER_PAG)
-        .sort({ createdAt: -1 });
-
-      count = ProjectsList.length;
-    }
-
-    const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
-
-    const data = {
-      pagination: {
-        count,
-        pageCount,
-      },
-      data: ProjectsList,
-    };
-
-    return {
-      msg: 'Lista de proyectos',
-      success: true,
-      data: data,
-    };
-  } catch (error) {
-    console.log('error al obtener proyectos ->', error);
+  if (!projectsList) {
     return {
       msg: 'Error al obtener proyectos',
       success: false,
-      data: error,
+      data: null,
     };
   }
+
+  return {
+    msg: 'Lista de proyectos',
+    success: false,
+    data: projectsList,
+  };
 };
 
 export const getProjectById = async (idProject) => {
   try {
-    const ProjectsList = await ProjectsModel.findById(idProject);
-
-    const participantsList = await ParticipantsModel.find({
-      id_project: idProject,
-    });
-
-    ProjectsList.participants = participantsList;
+    const ProjectsList = await projectsRepository.getProjectById(idProject);
 
     return {
       msg: 'Lista de proyecto',
@@ -337,5 +298,43 @@ export const searchProjectsByQueryFromDb = async (query) => {
   }
 };
 
-// helpers
-const generateNewCodeProjectByFlag = async () => {};
+// * coordinates and evaluators
+export const assignProjectsToEvaluators = async (
+  id_project,
+  id_assignedBy,
+  id_evaluator
+) => {
+  try {
+    //* buscamos el proyecto
+    const projectSelected = await projectsRepository.getProjectById(id_project);
+
+    if (projectSelected.id_assignedBy || projectSelected.assigned_to) {
+      return {
+        success: false,
+        msg: 'Proyecto ya ha sido asignado.',
+        data: null,
+      };
+    }
+
+    projectSelected.id_assignedBy = id_assignedBy;
+    projectSelected.assigned_to = id_evaluator;
+
+    const assigned = await projectsRepository.updateProject(
+      id_project,
+      projectSelected
+    );
+
+    return {
+      msg: 'Proyecto asignado exitosamente.',
+      success: true,
+      data: assigned,
+    };
+  } catch (error) {
+    console.log(`error al asignar projecto ${error}`);
+    return {
+      msg: 'error',
+      success: true,
+      data: error,
+    };
+  }
+};

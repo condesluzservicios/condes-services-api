@@ -26,6 +26,7 @@ const userSchema = new Schema(
     },
     isCompany: {
       type: Boolean,
+      default: false,
     },
     cod_number: {
       type: String,
@@ -35,6 +36,43 @@ const userSchema = new Schema(
       type: Number,
       required: false,
     },
+
+    // * evaluator / coordinator
+    identification_number: {
+      type: Number,
+      required: false,
+      unique: true,
+    },
+    expertise_area: {
+      type: String,
+      required: false,
+    },
+    line_research: {
+      type: String,
+      required: false,
+    },
+    profession: {
+      type: String,
+      required: false,
+    },
+    assigned_projects: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Projects',
+        },
+      ],
+      required: false,
+    },
+
+    // * coordinator
+    permissions: {
+      type: {
+        something: Boolean,
+        default: false,
+      },
+    },
+
     role: {
       type: String,
       default: 'user',

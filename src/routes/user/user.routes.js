@@ -17,6 +17,7 @@ import {
   updateStatusProject,
   sendEmailNotificationProjectCreated,
   searchProjectByQuery,
+  assignProjectsToEvaluatorsController,
 } from '../../controllers/projects/projects.controller.js';
 import {
   validateFormatLoginUser,
@@ -80,5 +81,11 @@ router.put('/update-approval-project', validateToken, updateStatusProject);
 router.post('/test-emails', validateToken, sendEmailNotificationProjectCreated);
 
 router.get('/search-projects', validateToken, searchProjectByQuery);
+
+router.post(
+  '/assign-project-evaluator',
+  validateToken,
+  assignProjectsToEvaluatorsController
+);
 
 export default router;

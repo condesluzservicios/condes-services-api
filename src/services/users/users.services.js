@@ -1,5 +1,4 @@
-import { constants } from '../../constants/pagination.constants.js';
-import ModelUsers from '../../Models/users/users.model.js';
+import * as userRepository from '../../repositories/users.repositories/users.repository.js';
 import { createHash } from '../../security/users/passwords.js';
 
 export const SaveNewUser = async (data) => {
@@ -7,8 +6,7 @@ export const SaveNewUser = async (data) => {
     const newPassword = await createHash(data.password);
     data.password = newPassword;
 
-    const newUser = new ModelUsers(data);
-    const userSaved = await newUser.save();
+    const userSaved = await userRepository.createNewUserRepository(data);
     return {
       msg: 'New user saved',
       success: true,
@@ -26,9 +24,7 @@ export const SaveNewUser = async (data) => {
 
 export const updateUserSignin = async (data) => {
   try {
-    const userUpdated = await ModelUsers.findByIdAndUpdate(data.id, data, {
-      upsert: true,
-    });
+    const userUpdated = await userRepository.updateUserRepository(data);
     return {
       msg: 'New user updated',
       success: true,
@@ -45,9 +41,8 @@ export const updateUserSignin = async (data) => {
 };
 
 export const getDataUser = async (email) => {
-  const result = [];
   try {
-    const user = await ModelUsers.find(email);
+    const user = await userRepository.getUserByEmail(email);
 
     return {
       msg: 'Datos del usuario.',
@@ -65,45 +60,13 @@ export const getDataUser = async (email) => {
 };
 
 export const getUserList = async (skip = 0) => {
-  let result = [];
-
-  skip = (skip - 1) * constants.ITEM_PER_PAG;
-
   try {
-    const count = await ModelUsers.estimatedDocumentCount();
-
-    const userList = await ModelUsers.find()
-      .skip(skip)
-      .limit(constants.ITEM_PER_PAG)
-      .sort({ createdAt: -1 });
-
-    userList.forEach((item) => {
-      let data = {};
-      data.id = item._id;
-      data.name = item.name;
-      data.last_name = item.last_name;
-      data.email = item.email;
-      data.investigations = data?.investigations
-        ? data.investigations
-        : 'No hay investigaciones';
-      result.push(data);
-      data = {};
-    });
-
-    const pageCount = Math.ceil(count / constants.ITEM_PER_PAG);
-
-    const data = {
-      pagination: {
-        count,
-        pageCount,
-      },
-      data: result,
-    };
+    const result = await userRepository.getUserListRepository(skip);
 
     return {
       msg: 'Datos del usuario.',
       success: true,
-      data: data,
+      data: result,
     };
   } catch (error) {
     console.log('error al obtener lista de usuarios.', error);
@@ -120,9 +83,7 @@ export const updateDataUser = async (data) => {
     const newPassword = await createHash(data.password);
     data.password = newPassword;
 
-    const userUpdated = await ModelUsers.findByIdAndUpdate(data.id, data, {
-      upsert: true,
-    });
+    const userUpdated = await userRepository.updateUserRepository(data);
     return {
       msg: 'Datos actualizados.',
       success: true,
@@ -140,9 +101,7 @@ export const updateDataUser = async (data) => {
 
 export const updateDataUserFromAdmin = async (data) => {
   try {
-    const userUpdated = await ModelUsers.findByIdAndUpdate(data.id, data, {
-      upsert: true,
-    });
+    const userUpdated = await userRepository.updateUserRepository(data);
     return {
       msg: 'Datos actualizados.',
       success: true,
@@ -160,11 +119,11 @@ export const updateDataUserFromAdmin = async (data) => {
 
 export const getUserByEmail = async (email) => {
   try {
-    const userFinded = await ModelUsers.find({ email });
+    const userFounded = await userRepository.getUserByEmail(email);
     return {
       msg: 'User',
       success: true,
-      data: userFinded,
+      data: userFounded,
     };
   } catch (error) {
     console.log('Error to get user', error);
@@ -176,81 +135,12 @@ export const getUserByEmail = async (email) => {
   }
 };
 
-export const getUserByID = async (id) => {
-  let result = [];
-
-  try {
-    const dataUser = await ModelUsers.find({ _id: id });
-
-    dataUser.forEach((item) => {
-      let data = {};
-      data.id = item._id;
-      data.name = item.name;
-      data.last_name = item.last_name;
-      data.email = item.email;
-      data.investigations = data?.investigations
-        ? data.investigations
-        : 'No hay investigaciones';
-      data.role = item.role;
-      data.country = item.country;
-      data.cod_number = item.cod_number;
-      data.phone = item.phone;
-      data.isCompany = item.isCompany;
-      result.push(data);
-      data = {};
-    });
-
-    return {
-      msg: 'Datos del usuario',
-      success: true,
-      data: result,
-    };
-  } catch (error) {
-    console.log('error al buscar usuario', error);
-    return {
-      msg: 'Error al buscar usuario',
-      success: false,
-      data: [],
-    };
-  }
-};
+export const getUserByID = async (id) =>
+  await userRepository.getUsersListByIdRepository(id);
 
 export const searchUsersByNameOrLastName = async (query) => {
-  let result = [];
-  let skip = 1;
   try {
-    skip = (skip - 1) * constants.ITEM_PER_PAG;
-
-    // const count = await ModelNews.estimatedDocumentCount();
-    const usersList = await ModelUsers.find({
-      name: { $regex: '.*' + query + '.*', $options: 'i' },
-    })
-      .skip(skip)
-      .limit(constants.ITEM_PER_PAG)
-      .sort({ createdAt: -1 });
-
-    if (usersList.length > 0) {
-      result = usersList;
-    } else {
-      const usersList = await ModelUsers.find({
-        last_name: { $regex: '.*' + query + '.*', $options: 'i' },
-      })
-        .skip(skip)
-        .limit(constants.ITEM_PER_PAG)
-        .sort({ createdAt: -1 });
-
-      result = usersList;
-    }
-
-    const pageCount = Math.ceil(result.length / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
-
-    const data = {
-      pagination: {
-        count: result.length,
-        pageCount,
-      },
-      data: result,
-    };
+    const data = await userRepository.searchUsersByNameAndLastName(query);
 
     return {
       msg: 'Lista de usuarios.',

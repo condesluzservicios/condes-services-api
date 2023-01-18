@@ -237,6 +237,16 @@ const registerProjectsSchema = new Schema(
       ],
       required: false,
     },
+
+    id_assignedBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'users',
+    },
+
+    assigned_to: {
+      type: Schema.Types.ObjectId,
+      ref: 'users',
+    },
   },
   {
     timestamps: true,

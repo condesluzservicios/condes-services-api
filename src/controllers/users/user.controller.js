@@ -1,6 +1,7 @@
 import * as auth from '../../security/helpers/tokens.js';
 import * as handlePasswords from '../../security/users/passwords.js';
 import * as services from '../../services/users/users.services.js';
+import * as userRepository from '../../repositories/users.repositories/users.repository.js';
 
 export const signIn = async (req, res) => {
   const userSaved = await services.SaveNewUser(req.body);
@@ -105,4 +106,36 @@ export const getAllUser = async (req, res) => {
   const { skip } = req.query;
   const userList = await services.getUserList(Number(skip) || 0);
   res.json(userList);
+};
+
+// * coordinators and evaluators
+export const createNewUserForAdmin = async (req, res) => {
+  const body = req.body;
+  const newPassword = await handlePasswords.createHash(body.password);
+  body.password = newPassword;
+  const userSaved = await userRepository.createNewUserRepository(body);
+
+  if (!userSaved) {
+    return res.json({
+      msg: 'Error al crear usuario',
+      success: false,
+      data: userSaved,
+    });
+  }
+
+  res.json({
+    msg: 'Usuario creado exitosamente.',
+    success: true,
+    data: userSaved,
+  });
+};
+
+export const getUsersByRoleController = async (req, res) => {
+  const { skip, role } = req.query;
+
+  const usersList = await userRepository.getUsersByRoleRepository(
+    Number(skip) || 0,
+    role
+  );
+  res.json(usersList);
 };

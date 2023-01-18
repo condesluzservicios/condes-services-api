@@ -3,3 +3,10 @@ export const typesProjects = {
   financiado: 'FI-',
   asociado: 'AS-',
 };
+
+export const userRoles = {
+  admin: 'admin',
+  user: 'user',
+  coordinator: 'coordinator',
+  evaluator: 'evaluator',
+};
