@@ -34,7 +34,7 @@ import {
   updateDataUserFromAdmin,
   searchUsers,
   createNewUserForAdmin,
-  getUsersByRoleController,
+  getUsersByRoleAndLineSearchController,
 } from '../../controllers/users/user.controller.js';
 const router = express.Router();
 
@@ -45,7 +45,11 @@ router.put('/update-data-user', validateToken, updateDataUserFromAdmin);
 router.get('/search-users', validateToken, searchUsers);
 // coordinate users
 router.post('/create-user-for-admin', validateToken, createNewUserForAdmin);
-router.get('/get-users-by-role', validateToken, getUsersByRoleController);
+router.get(
+  '/get-users-by-role-and-line-research',
+  validateToken,
+  getUsersByRoleAndLineSearchController
+);
 
 // news
 router.post('/create-news', validateToken, createNewNews);

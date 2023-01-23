@@ -1,7 +1,9 @@
+import { v4 } from 'uuid';
 import * as auth from '../../security/helpers/tokens.js';
 import * as handlePasswords from '../../security/users/passwords.js';
 import * as services from '../../services/users/users.services.js';
 import * as userRepository from '../../repositories/users.repositories/users.repository.js';
+import { sendEmailNotificationUserCreated } from '../../services/emails/emails.service.js';
 
 export const signIn = async (req, res) => {
   const userSaved = await services.SaveNewUser(req.body);
@@ -42,6 +44,9 @@ export const login = async (req, res) => {
           name: user.data[0].name,
           last_name: user.data[0].last_name,
           role: user.data[0].role,
+          line_research: user.data[0].line_research
+            ? user.data[0].line_research
+            : null,
           token,
         },
       });
@@ -103,15 +108,28 @@ export const searchUsers = async (req, res) => {
 };
 
 export const getAllUser = async (req, res) => {
-  const { skip } = req.query;
-  const userList = await services.getUserList(Number(skip) || 0);
+  const { id_user, skip } = req.query;
+  const userList = await services.getUserList(Number(skip) || 0, id_user);
   res.json(userList);
 };
 
 // * coordinators and evaluators
 export const createNewUserForAdmin = async (req, res) => {
   const body = req.body;
-  const newPassword = await handlePasswords.createHash(body.password);
+
+  const newPasswordGenerate = v4();
+
+  const sendEmailNotificationNewUser = await sendEmailNotificationUserCreated({
+    email: body.email,
+    plain_password: newPasswordGenerate,
+  });
+
+  if (!sendEmailNotificationNewUser.success) {
+    res.json(sendEmailNotificationNewUser);
+    return;
+  }
+
+  const newPassword = await handlePasswords.createHash(newPasswordGenerate);
   body.password = newPassword;
   const userSaved = await userRepository.createNewUserRepository(body);
 
@@ -130,12 +148,13 @@ export const createNewUserForAdmin = async (req, res) => {
   });
 };
 
-export const getUsersByRoleController = async (req, res) => {
-  const { skip, role } = req.query;
+export const getUsersByRoleAndLineSearchController = async (req, res) => {
+  const { skip, role, line_research } = req.query;
 
-  const usersList = await userRepository.getUsersByRoleRepository(
-    Number(skip) || 0,
-    role
+  const usersList = await userRepository.getUsersByRoleAndLineSearchRepository(
+    role,
+    line_research,
+    Number(skip) || 0
   );
   res.json(usersList);
 };

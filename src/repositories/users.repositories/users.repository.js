@@ -21,14 +21,14 @@ export const createNewUserRepository = async (user) => {
  * @param {*} skip
  * @returns users list
  */
-export const getUserListRepository = async (skip = 0) => {
+export const getUserListRepository = async (skip = 0, id_user) => {
   let results = [];
   skip = skip > 0 ? (skip - 1) * constants.ITEM_PER_PAG : skip;
 
   try {
-    const count = await UserModel.estimatedDocumentCount();
+    const count = await UserModel.count({ _id: { $ne: id_user } });
 
-    const userList = await UserModel.find()
+    const userList = await UserModel.find({ _id: { $ne: id_user } })
       .skip(skip)
       .limit(constants.ITEM_PER_PAG)
       .sort({ createdAt: -1 });
@@ -42,7 +42,7 @@ export const getUserListRepository = async (skip = 0) => {
       data.investigations = data?.investigations
         ? data.investigations
         : 'No hay investigaciones';
-      result.push(data);
+      results.push(data);
       data = {};
     });
 
@@ -56,15 +56,11 @@ export const getUserListRepository = async (skip = 0) => {
       data: results,
     };
 
-    return {
-      message: 'lista de usuarios',
-      success: true,
-      data,
-    };
+    return data;
   } catch (error) {
-    console.log(`Error al obtener usuarios por rol ${error}`);
+    console.log(`Error al obtener usuarios ${error}`);
     return {
-      msg: 'Error to save new user',
+      msg: 'Error al obtener usuarios',
       success: false,
       data: error,
     };
@@ -119,14 +115,18 @@ export const getUsersListByIdRepository = async (id) => {
  * @param {*} role role to search
  * @returns list of users with role
  */
-export const getUsersByRoleRepository = async (skip = 0, role) => {
+export const getUsersByRoleAndLineSearchRepository = async (
+  role,
+  line_research,
+  skip = 0
+) => {
   let results = [];
   skip = skip > 0 ? (skip - 1) * constants.ITEM_PER_PAG : skip;
 
   try {
-    const count = await UserModel.find({ role }).count();
+    const count = await UserModel.find({ role, line_research }).count();
 
-    const userList = await UserModel.find({ role })
+    const userList = await UserModel.find({ role, line_research })
       .skip(skip)
       .limit(constants.ITEM_PER_PAG)
       .sort({ createdAt: -1 });
@@ -178,6 +178,21 @@ export const getUserByEmail = async (email) => {
     return userUpdated;
   } catch (error) {
     console.log(`Error al actualizar usuario ${error}`);
+  }
+};
+
+/**
+ * @param {*} id user
+ * @returns user data
+ */
+export const getUserByIdRepository = async (id) => {
+  try {
+    const user = await UserModel.findOne({ _id: id });
+
+    return user;
+  } catch (error) {
+    console.log(`error al buscar suario ${error}`);
+    return null;
   }
 };
 

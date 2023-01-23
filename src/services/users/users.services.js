@@ -59,9 +59,9 @@ export const getDataUser = async (email) => {
   }
 };
 
-export const getUserList = async (skip = 0) => {
+export const getUserList = async (skip = 0, id_user) => {
   try {
-    const result = await userRepository.getUserListRepository(skip);
+    const result = await userRepository.getUserListRepository(skip, id_user);
 
     return {
       msg: 'Datos del usuario.',

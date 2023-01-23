@@ -1,3 +1,4 @@
+import { userRoles } from '../../constants/entities.js';
 import { constants } from '../../constants/pagination.constants.js';
 import ProjectsModel from '../../Models/projects/projects.model.js';
 
@@ -12,7 +13,7 @@ export const saveNewProject = async (project) => {
 
     return projectSaved;
   } catch (error) {
-    console.log('error al crear nuevo proyecto');
+    console.log(`error al crear nuevo proyecto ${error}`);
     return null;
   }
 };
@@ -42,14 +43,19 @@ export const getProjectById = async (id) => {
   }
 };
 
-export const getProjectsList = async (skip = 0, flag) => {
+/**
+ * @param {*} skip int amount of projects to skip
+ * @param {*} query string to search for
+ * @returns projects list
+ */
+export const getProjectsList = async (skip = 0, query) => {
   let ProjectsList = [];
   let count = 0;
 
   try {
     skip = (skip - 1) * constants.ITEM_PER_PAG;
 
-    if (flag === '') {
+    if (query === '') {
       count = await ProjectsModel.estimatedDocumentCount();
 
       ProjectsList = await ProjectsModel.find()
@@ -58,7 +64,7 @@ export const getProjectsList = async (skip = 0, flag) => {
         .sort({ createdAt: -1 });
     } else {
       ProjectsList = await ProjectsModel.find({
-        status_project: { $regex: `^${flag}$`, $options: 'i' },
+        status_project: { $regex: `^${query}$`, $options: 'i' },
       })
         .skip(skip)
         .limit(constants.ITEM_PER_PAG)
@@ -77,13 +83,106 @@ export const getProjectsList = async (skip = 0, flag) => {
       data: ProjectsList,
     };
 
-    return {
-      msg: 'Lista de proyectos',
-      success: true,
-      data: data,
-    };
+    return data;
   } catch (error) {
     console.log('error al obtener proyectos ->', error);
+    return null;
+  }
+};
+
+export const getProjectListByLineSearchWithOutAssignmentRepository = async ({
+  id_user,
+  role,
+  line_research,
+  skip,
+}) => {
+  skip = skip > 0 ? (skip - 1) * constants.ITEM_PER_PAG : skip;
+
+  try {
+    if (role === userRoles.coordinator) {
+      const count = await ProjectsModel.count({
+        line_research,
+        id_assignedBy: { $exists: false },
+        assigned_to: { $exists: false },
+        status_project: 'Por aprobar',
+      });
+
+      const projectsList = await ProjectsModel.find({
+        line_research,
+        id_assignedBy: { $exists: false },
+        assigned_to: { $exists: false },
+        status_project: 'Por aprobar',
+      })
+        .skip(skip)
+        .limit(constants.ITEM_PER_PAG)
+        .sort({ createdAt: -1 });
+
+      const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
+
+      return {
+        pagination: {
+          count,
+          pageCount,
+        },
+        data: projectsList,
+      };
+    }
+
+    if (role === userRoles.evaluator) {
+      const count = await ProjectsModel.count({
+        line_research,
+        assigned_to: id_user,
+        status_project: 'Por aprobar',
+      });
+
+      const projectsList = await ProjectsModel.find({
+        line_research,
+        assigned_to: id_user,
+        status_project: 'Por aprobar',
+      })
+        .skip(skip)
+        .limit(constants.ITEM_PER_PAG)
+        .sort({ createdAt: -1 });
+
+      const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
+
+      return {
+        pagination: {
+          count,
+          pageCount,
+        },
+        data: projectsList,
+      };
+    }
+
+    const count = await ProjectsModel.count({
+      line_research,
+      id_assignedBy: { $exists: false },
+      assigned_to: { $exists: false },
+      status_project: 'Por aprobar',
+    });
+
+    const projectsList = await ProjectsModel.find({
+      line_research,
+      id_assignedBy: { $exists: false },
+      assigned_to: { $exists: false },
+      status_project: 'Por aprobar',
+    })
+      .skip(skip)
+      .limit(constants.ITEM_PER_PAG)
+      .sort({ createdAt: -1 });
+
+    const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
+
+    return {
+      pagination: {
+        count,
+        pageCount,
+      },
+      data: projectsList,
+    };
+  } catch (error) {
+    console.log('Error al actualizar proyecto.', error);
     return null;
   }
 };
@@ -119,7 +218,7 @@ export const updateProject = async (id_project, projectData) => {
 
     return projectUpdated;
   } catch (error) {
-    console.log('Error al actualizar proyecto.', error);
-    throw new Error('Error al actualizar proyecto.');
+    console.log(`Error al actualizar proyecto. ${error}`);
+    // throw new Error('Error al actualizar proyecto.');
   }
 };

@@ -1,9 +1,12 @@
 import ProjectsModel from '../../Models/projects/projects.model.js';
 import ParticipantsModel from '../../Models/projects/projectParticipants.model.js';
-import * as projectsRepository from '../../repositories/projects.repositories/projects.repository.js';
 import { constants } from '../../constants/pagination.constants.js';
+import * as projectsRepository from '../../repositories/projects.repositories/projects.repository.js';
+import { getUserByIdRepository } from '../../repositories/users.repositories/users.repository.js';
 import * as emailsService from '../../services/emails/emails.service.js';
 import { generateSequentialNumber } from '../../utils/projects.utils.js';
+import connectMailer from '../../mail/config.js';
+import { formatEmailNotificationAssignmentProjectToEvaluator } from '../../mail/documents/registeredProject.js';
 
 export const createNewProject = async (data) => {
   try {
@@ -319,10 +322,33 @@ export const assignProjectsToEvaluators = async (
     projectSelected.id_assignedBy = id_assignedBy;
     projectSelected.assigned_to = id_evaluator;
 
-    const assigned = await projectsRepository.updateProject(
-      id_project,
-      projectSelected
-    );
+    const evaluator_data = await getUserByIdRepository(id_evaluator);
+    const coordinator_data = await getUserByIdRepository(id_assignedBy);
+
+    const assigned = await projectsRepository.updateProject(id_project, {
+      id_assignedBy: id_assignedBy,
+      assigned_to: id_evaluator,
+    });
+
+    projectSelected.assignmentBy =
+      coordinator_data.name + ' ' + coordinator_data.last_name;
+
+    const notification = await connectMailer({
+      email_dest: evaluator_data.email,
+      subject: 'Notificación de asignación de proyecto.',
+      format:
+        formatEmailNotificationAssignmentProjectToEvaluator(projectSelected),
+    });
+
+    if (!notification.accepted.length > 0) {
+      return {
+        msg: 'Error al enviar correo de asignación de proyecto.',
+        success: false,
+        data: [],
+      };
+    }
+
+    // * notificar al evaluador que se le ha asignado un proyecto
 
     return {
       msg: 'Proyecto asignado exitosamente.',
@@ -332,7 +358,7 @@ export const assignProjectsToEvaluators = async (
   } catch (error) {
     console.log(`error al asignar projecto ${error}`);
     return {
-      msg: 'error',
+      msg: 'Error al asignar proyecto',
       success: true,
       data: error,
     };

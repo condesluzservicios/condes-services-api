@@ -184,10 +184,10 @@ export const projectParticipantsSchema = yup.object().shape({
     .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Introduzca una institución.')
     .required('Institución es requerida.'),
 
-  faculty_core: yup
-    .string()
-    .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Introduzca una facultad/núcleo.')
-    .required('Facultad/núcleo es requerido.'),
+  // faculty_core: yup
+  //   .string()
+  //   .optional('Facultad/núcleo es requerido.')
+  //   .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Introduzca una facultad/núcleo.'),
 
   category: yup
     .string()

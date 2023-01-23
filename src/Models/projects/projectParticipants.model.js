@@ -46,7 +46,7 @@ const projectparticipantsSchema = new Schema(
     },
     faculty_core: {
       type: String,
-      required: true,
+      required: false,
     },
     category: {
       type: String,

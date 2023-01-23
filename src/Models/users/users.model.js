@@ -55,6 +55,7 @@ const userSchema = new Schema(
       type: String,
       required: false,
     },
+    // * evaluator
     assigned_projects: {
       type: [
         {
