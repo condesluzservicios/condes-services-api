@@ -1,4 +1,4 @@
-import { userRoles } from '../../constants/entities.js';
+import { flagsToGetProjects, userRoles } from '../../constants/entities.js';
 import { constants } from '../../constants/pagination.constants.js';
 import ProjectsModel from '../../Models/projects/projects.model.js';
 
@@ -59,6 +59,17 @@ export const getProjectsList = async (skip = 0, query) => {
       count = await ProjectsModel.estimatedDocumentCount();
 
       ProjectsList = await ProjectsModel.find()
+        .populate({
+          path: 'participants',
+        })
+        .populate({
+          path: 'id_assignedBy',
+          select: '_id name last_name email line_research',
+        })
+        .populate({
+          path: 'assigned_to',
+          select: '_id name last_name email line_research',
+        })
         .skip(skip)
         .limit(constants.ITEM_PER_PAG)
         .sort({ createdAt: -1 });
@@ -66,6 +77,17 @@ export const getProjectsList = async (skip = 0, query) => {
       ProjectsList = await ProjectsModel.find({
         status_project: { $regex: `^${query}$`, $options: 'i' },
       })
+        .populate({
+          path: 'participants',
+        })
+        .populate({
+          path: 'id_assignedBy',
+          select: '_id name last_name email line_research',
+        })
+        .populate({
+          path: 'assigned_to',
+          select: '_id name last_name email line_research',
+        })
         .skip(skip)
         .limit(constants.ITEM_PER_PAG)
         .sort({ createdAt: -1 });
@@ -95,27 +117,55 @@ export const getProjectListByLineSearchWithOutAssignmentRepository = async ({
   role,
   line_research,
   skip,
+  flag,
 }) => {
   skip = skip > 0 ? (skip - 1) * constants.ITEM_PER_PAG : skip;
 
   try {
     if (role === userRoles.coordinator) {
-      const count = await ProjectsModel.count({
-        line_research,
-        id_assignedBy: { $exists: false },
-        assigned_to: { $exists: false },
-        status_project: 'Por aprobar',
-      });
+      const count =
+        flag === flagsToGetProjects.assigned
+          ? await ProjectsModel.count({
+              line_research,
+              id_assignedBy: id_user,
+              // assigned_to: { $exists: false },
+              // status_project: 'Por aprobar',
+            })
+          : await ProjectsModel.count({
+              line_research,
+              id_assignedBy: { $exists: false },
+              assigned_to: { $exists: false },
+              // status_project: 'Por aprobar',
+            });
 
-      const projectsList = await ProjectsModel.find({
-        line_research,
-        id_assignedBy: { $exists: false },
-        assigned_to: { $exists: false },
-        status_project: 'Por aprobar',
-      })
-        .skip(skip)
-        .limit(constants.ITEM_PER_PAG)
-        .sort({ createdAt: -1 });
+      const projectsList =
+        flag === flagsToGetProjects.assigned
+          ? await ProjectsModel.find({
+              line_research,
+              id_assignedBy: id_user,
+              // assigned_to: { $exists: false },
+              // status_project: 'Por aprobar',
+            })
+              .populate({
+                path: 'assigned_to',
+                select: '_id name last_name email line_research',
+              })
+              .skip(skip)
+              .limit(constants.ITEM_PER_PAG)
+              .sort({ createdAt: -1 })
+          : await ProjectsModel.find({
+              line_research,
+              id_assignedBy: { $exists: false },
+              assigned_to: { $exists: false },
+              // status_project: 'Por aprobar',
+            })
+              .populate({
+                path: 'assigned_to',
+                select: '_id name last_name email line_research',
+              })
+              .skip(skip)
+              .limit(constants.ITEM_PER_PAG)
+              .sort({ createdAt: -1 });
 
       const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
 
@@ -140,6 +190,10 @@ export const getProjectListByLineSearchWithOutAssignmentRepository = async ({
         assigned_to: id_user,
         status_project: 'Por aprobar',
       })
+        .populate({
+          path: 'assigned_to',
+          select: '_id name last_name email line_research',
+        })
         .skip(skip)
         .limit(constants.ITEM_PER_PAG)
         .sort({ createdAt: -1 });
@@ -168,6 +222,10 @@ export const getProjectListByLineSearchWithOutAssignmentRepository = async ({
       assigned_to: { $exists: false },
       status_project: 'Por aprobar',
     })
+      .populate({
+        path: 'assigned_to',
+        select: '_id name last_name email line_research',
+      })
       .skip(skip)
       .limit(constants.ITEM_PER_PAG)
       .sort({ createdAt: -1 });

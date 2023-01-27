@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { programsAndProjectsStatus } from '../../constants/entities.js';
 const { Types, Schema, models, model } = mongoose;
 
 const registerProjectsSchema = new Schema(
@@ -43,7 +44,7 @@ const registerProjectsSchema = new Schema(
     status_project: {
       type: String,
       required: true,
-      default: 'Por aprobar',
+      default: programsAndProjectsStatus.toBeApproved,
     },
 
     // * teach
@@ -160,13 +161,13 @@ const registerProjectsSchema = new Schema(
       required: false,
     },
 
-    // * financed
+    // * end financed
 
-    program_code: {
-      type: String,
-      required: false,
-      unique: true,
-    },
+    // program_code: {
+    //   type: String,
+    //   required: false,
+    //   unique: true,
+    // },
 
     project_code: {
       type: String,

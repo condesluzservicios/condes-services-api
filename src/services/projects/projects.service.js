@@ -4,7 +4,7 @@ import { constants } from '../../constants/pagination.constants.js';
 import * as projectsRepository from '../../repositories/projects.repositories/projects.repository.js';
 import { getUserByIdRepository } from '../../repositories/users.repositories/users.repository.js';
 import * as emailsService from '../../services/emails/emails.service.js';
-import { generateSequentialNumber } from '../../utils/projects.utils.js';
+import { generateSequentialNumberProgramAndProject } from '../../utils/projects.utils.js';
 import connectMailer from '../../mail/config.js';
 import { formatEmailNotificationAssignmentProjectToEvaluator } from '../../mail/documents/registeredProject.js';
 
@@ -106,7 +106,10 @@ export const updateProject = async (data, flag = '') => {
       const amountProjects =
         await projectsRepository.getAmountProjectsByCategoryProject();
 
-      const code = generateSequentialNumber(amountProjects, data.type_project);
+      const code = generateSequentialNumberProgramAndProject(
+        amountProjects,
+        data.type_project
+      );
 
       data.project_code = code;
 

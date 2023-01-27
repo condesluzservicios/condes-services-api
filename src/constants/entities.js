@@ -10,3 +10,14 @@ export const userRoles = {
   coordinator: 'coordinator',
   evaluator: 'evaluator',
 };
+
+export const flagsToGetProjects = {
+  assigned: 'asignados',
+  toBeAssigned: 'por asignar',
+};
+
+export const programsAndProjectsStatus = {
+  toBeApproved: 'por aprobar',
+  approved: 'aprobados',
+  disapproved: 'desaprobados',
+};

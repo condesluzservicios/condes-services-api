@@ -5,6 +5,15 @@ import { userRoles } from '../../constants/entities.js';
 
 export const saveNewProject = async (req, res) => {
   const saved = await projectsRepository.saveNewProject(req.body);
+  if (!saved) {
+    res.json({
+      msg: 'Error al registrar proyecto',
+      success: false,
+      data: null,
+    });
+    return;
+  }
+
   res.json({
     msg: 'Proyecto registrado exitosamente',
     success: true,
@@ -93,7 +102,7 @@ export const getProjectsByLineSearchWithoutAssignmentController = async (
   req,
   res
 ) => {
-  const { id_user, role, line_research, skip } = req.query;
+  const { id_user, role, line_research, skip, flag } = req.query;
 
   const projects =
     await projectsRepository.getProjectListByLineSearchWithOutAssignmentRepository(
@@ -102,6 +111,7 @@ export const getProjectsByLineSearchWithoutAssignmentController = async (
         role: role,
         line_research,
         skip: Number(skip) || 0,
+        flag,
       }
     );
 

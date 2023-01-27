@@ -29,6 +29,12 @@ import {
   validateDataProjectBySteps,
 } from '../../middlewares/users/validateUser.middleware.js';
 import { validateToken } from '../../middlewares/admin/verificateToken.middleware.js';
+import {
+  getProgramByIdController,
+  getProgramsByStatusController,
+  getProgramsWithProjectsPendingRegistrationController,
+  registerNewProgramController,
+} from '../../controllers/programs/programs.controllers.js';
 
 router.post('/signin', validateFormatLoginUser, validateExistUser, signIn);
 
@@ -94,5 +100,19 @@ router.post(
   validateToken,
   assignProjectsToEvaluatorsController
 );
+
+// * programs
+router.post('/register-program', validateToken, registerNewProgramController);
+
+router.get(
+  '/get-programs-by-id-user',
+  validateToken,
+  getProgramsWithProjectsPendingRegistrationController
+);
+
+// * admin
+router.get('/get-program-by-id', validateToken, getProgramByIdController);
+
+router.get('/get-all-programs', validateToken, getProgramsByStatusController);
 
 export default router;
