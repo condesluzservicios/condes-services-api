@@ -2,7 +2,7 @@ import { userRoles } from '../../constants/entities.js';
 import {
   getProgramById,
   searchProgramsList,
-  getProgramsListByLineSearchWithOutAssignmentRepository,
+  getProgramsListByCommissionsRoleWithOutAssignmentRepository,
   getProgramsByIdUser,
   getProgramsWithProjectsPendingRegistration,
   updateStatusProgram,
@@ -74,21 +74,20 @@ export const getProgramsByStatusController = async (req, res) => {
   });
 };
 
-export const getProgramsByLineSearchWithoutAssignmentController = async (
+export const getProgramsByCommissionsRoleWithoutAssignmentController = async (
   req,
   res
 ) => {
-  const { id_user, role, line_research, skip, flag } = req.query;
+  const { id_user, role, commissionsRole, skip, flag } = req.query;
 
-  const programs = await getProgramsListByLineSearchWithOutAssignmentRepository(
-    {
+  const programs =
+    await getProgramsListByCommissionsRoleWithOutAssignmentRepository({
       id_user: id_user,
       role: role,
-      line_research,
+      commissionsRole,
       skip: Number(skip) || 0,
       flag,
-    }
-  );
+    });
 
   if (!programs) {
     res.json({
@@ -110,10 +109,9 @@ export const getProgramsWithProjectsPendingRegistrationController = async (
   req,
   res
 ) => {
-  const { id_user, skip } = req.query;
+  const { skip } = req.query;
 
   const programs = await getProgramsWithProjectsPendingRegistration(
-    id_user,
     Number(skip) | 0
   );
 

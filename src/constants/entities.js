@@ -32,3 +32,8 @@ export const programsAndProjectsStatus = {
   approved: 'aprobados',
   disapproved: 'desaprobados',
 };
+
+export const commissionsRoles = {
+  humanisticCommission: 'comisión humanística',
+  scientificCommission: 'comisión científica',
+};

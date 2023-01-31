@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { commissionsRoles } from '../../constants/entities.js';
 const { Schema, model } = mongoose;
 
 const userSchema = new Schema(
@@ -50,6 +51,11 @@ const userSchema = new Schema(
     line_research: {
       type: String,
       required: false,
+    },
+    commissionsRole: {
+      type: String,
+      required: true,
+      default: Object.keys(commissionsRoles)[0],
     },
     profession: {
       type: String,

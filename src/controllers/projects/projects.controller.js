@@ -8,8 +8,8 @@ export const saveNewProjectController = async (req, res) => {
   const body = req.body;
   const saved = await projectsRepository.saveNewProject(body);
 
-  if (body.id_program) {
-    await updateProgramAssociateProject(body.id_program, saved._id);
+  if (body.program_associated) {
+    await updateProgramAssociateProject(body.program_associated, saved._id);
   }
 
   if (!saved) {
@@ -105,18 +105,18 @@ export const assignProjectsToEvaluatorsController = async (req, res) => {
   res.json(assigned);
 };
 
-export const getProjectsByLineSearchWithoutAssignmentController = async (
+export const getProjectsByCommissionsRoleWithoutAssignmentController = async (
   req,
   res
 ) => {
-  const { id_user, role, line_research, skip, flag } = req.query;
+  const { id_user, role, commissionsRole, skip, flag } = req.query;
 
   const projects =
-    await projectsRepository.getProjectListByLineSearchWithOutAssignmentRepository(
+    await projectsRepository.getProjectListByCommissionsRoleWithOutAssignmentRepository(
       {
         id_user: id_user,
         role: role,
-        line_research,
+        commissionsRole,
         skip: Number(skip) || 0,
         flag,
       }

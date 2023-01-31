@@ -30,6 +30,9 @@ export const getProjectById = async (id) => {
   try {
     const project = await ProjectsModel.findById(id)
       .populate({
+        path: 'program_associated',
+      })
+      .populate({
         path: 'participants',
       })
       .populate({
@@ -116,133 +119,132 @@ export const getProjectsList = async (skip = 0, query) => {
   }
 };
 
-export const getProjectListByLineSearchWithOutAssignmentRepository = async ({
-  id_user,
-  role,
-  line_research,
-  skip,
-  flag,
-}) => {
-  skip = skip > 0 ? (skip - 1) * constants.ITEM_PER_PAG : skip;
+/**
+ * @param {*} param0 user id, user role, commission role, skip, flag
+ * @returns projects list
+ */
+export const getProjectListByCommissionsRoleWithOutAssignmentRepository =
+  async ({ id_user, role, commissionsRole, skip, flag }) => {
+    skip = skip > 0 ? (skip - 1) * constants.ITEM_PER_PAG : skip;
 
-  try {
-    if (role === userRoles.coordinator) {
-      const count =
-        flag === flagsToGetProjects.assigned
-          ? await ProjectsModel.count({
-              line_research,
-              id_assignedBy: id_user,
-              // assigned_to: { $exists: false },
-              // status_project: 'Por aprobar',
-            })
-          : await ProjectsModel.count({
-              line_research,
-              id_assignedBy: { $exists: false },
-              assigned_to: { $exists: false },
-              // status_project: 'Por aprobar',
-            });
-
-      const projectsList =
-        flag === flagsToGetProjects.assigned
-          ? await ProjectsModel.find({
-              line_research,
-              id_assignedBy: id_user,
-              // assigned_to: { $exists: false },
-              // status_project: 'Por aprobar',
-            })
-              .populate({
-                path: 'assigned_to',
-                select: '_id name last_name email line_research',
+    try {
+      if (role === userRoles.coordinator) {
+        const count =
+          flag === flagsToGetProjects.assigned
+            ? await ProjectsModel.count({
+                commissionsRole,
+                id_assignedBy: id_user,
+                // assigned_to: { $exists: false },
+                // status_project: 'Por aprobar',
               })
-              .skip(skip)
-              .limit(constants.ITEM_PER_PAG)
-              .sort({ createdAt: -1 })
-          : await ProjectsModel.find({
-              line_research,
-              id_assignedBy: { $exists: false },
-              assigned_to: { $exists: false },
-            })
-              .skip(skip)
-              .limit(constants.ITEM_PER_PAG)
-              .sort({ createdAt: -1 });
+            : await ProjectsModel.count({
+                commissionsRole,
+                id_assignedBy: { $exists: false },
+                assigned_to: { $exists: false },
+                // status_project: 'Por aprobar',
+              });
 
-      const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
+        const projectsList =
+          flag === flagsToGetProjects.assigned
+            ? await ProjectsModel.find({
+                commissionsRole,
+                id_assignedBy: id_user,
+                // assigned_to: { $exists: false },
+                // status_project: 'Por aprobar',
+              })
+                .populate({
+                  path: 'assigned_to',
+                  select: '_id name last_name email commissionsRole',
+                })
+                .skip(skip)
+                .limit(constants.ITEM_PER_PAG)
+                .sort({ createdAt: -1 })
+            : await ProjectsModel.find({
+                commissionsRole,
+                id_assignedBy: { $exists: false },
+                assigned_to: { $exists: false },
+              })
+                .skip(skip)
+                .limit(constants.ITEM_PER_PAG)
+                .sort({ createdAt: -1 });
 
-      return {
-        pagination: {
-          count,
-          pageCount,
-        },
-        data: projectsList,
-      };
-    }
+        const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
 
-    if (role === userRoles.evaluator) {
-      const count = await ProjectsModel.count({
-        line_research,
-        assigned_to: id_user,
-        status_project: programsAndProjectsStatus.toBeApproved,
-      });
+        return {
+          pagination: {
+            count,
+            pageCount,
+          },
+          data: projectsList,
+        };
+      }
 
-      const projectsList = await ProjectsModel.find({
-        line_research,
-        assigned_to: id_user,
-        status_project: programsAndProjectsStatus.toBeApproved,
-      })
-        .populate({
-          path: 'assigned_to',
-          select: '_id name last_name email line_research',
+      if (role === userRoles.evaluator) {
+        const count = await ProjectsModel.count({
+          commissionsRole,
+          assigned_to: id_user,
+          status_project: programsAndProjectsStatus.toBeApproved,
+        });
+
+        const projectsList = await ProjectsModel.find({
+          commissionsRole,
+          assigned_to: id_user,
+          status_project: programsAndProjectsStatus.toBeApproved,
         })
-        .skip(skip)
-        .limit(constants.ITEM_PER_PAG)
-        .sort({ createdAt: -1 });
+          .populate({
+            path: 'assigned_to',
+            select: '_id name last_name email commissionsRole',
+          })
+          .skip(skip)
+          .limit(constants.ITEM_PER_PAG)
+          .sort({ createdAt: -1 });
 
-      const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
+        const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
 
-      return {
-        pagination: {
-          count,
-          pageCount,
-        },
-        data: projectsList,
-      };
+        return {
+          pagination: {
+            count,
+            pageCount,
+          },
+          data: projectsList,
+        };
+      }
+
+      // const count = await ProjectsModel.count({
+      //   commissionsRole,
+      //   id_assignedBy: { $exists: false },
+      //   assigned_to: { $exists: false },
+      //   status_project: programsAndProjectsStatus.toBeApproved,
+      // });
+
+      // const projectsList = await ProjectsModel.find({
+      //   commissionsRole,
+      //   id_assignedBy: { $exists: false },
+      //   assigned_to: { $exists: false },
+      //   status_project: programsAndProjectsStatus.toBeApproved,
+      // })
+      //   .populate({
+      //     path: 'assigned_to',
+      //     select: '_id name last_name email line_research',
+      //   })
+      //   .skip(skip)
+      //   .limit(constants.ITEM_PER_PAG)
+      //   .sort({ createdAt: -1 });
+
+      // const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
+
+      // return {
+      //   pagination: {
+      //     count,
+      //     pageCount,
+      //   },
+      //   data: projectsList,
+      // };
+    } catch (error) {
+      console.log('Error al actualizar proyecto.', error);
+      return null;
     }
-
-    // const count = await ProjectsModel.count({
-    //   line_research,
-    //   id_assignedBy: { $exists: false },
-    //   assigned_to: { $exists: false },
-    //   status_project: programsAndProjectsStatus.toBeApproved,
-    // });
-
-    // const projectsList = await ProjectsModel.find({
-    //   line_research,
-    //   id_assignedBy: { $exists: false },
-    //   assigned_to: { $exists: false },
-    //   status_project: programsAndProjectsStatus.toBeApproved,
-    // })
-    //   .populate({
-    //     path: 'assigned_to',
-    //     select: '_id name last_name email line_research',
-    //   })
-    //   .skip(skip)
-    //   .limit(constants.ITEM_PER_PAG)
-    //   .sort({ createdAt: -1 });
-
-    // const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
-
-    // return {
-    //   pagination: {
-    //     count,
-    //     pageCount,
-    //   },
-    //   data: projectsList,
-    // };
-  } catch (error) {
-    console.log('Error al actualizar proyecto.', error);
-    return null;
-  }
-};
+  };
 
 /**
  * @returns amounts of projects

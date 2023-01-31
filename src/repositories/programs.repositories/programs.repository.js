@@ -65,20 +65,17 @@ export const getProgramsByIdUser = async (id_user, skip) => {
  * @param {*} id_user
  * @returns programs associated to user
  */
-export const getProgramsWithProjectsPendingRegistration = async (
-  id_user,
-  skip
-) => {
+export const getProgramsWithProjectsPendingRegistration = async (skip) => {
   try {
     skip = (skip - 1) * constants.ITEM_PER_PAG;
 
     const count = await ProgramModel.estimatedDocumentCount({
-      created_by: id_user,
+      status_program: statusProgramsAndProject.toBeApproved,
       $where: 'this.projects.length < 3',
     });
 
     const incompletePrograms = await ProgramModel.find({
-      created_by: id_user,
+      status_program: statusProgramsAndProject.toBeApproved,
       $where: 'this.projects.length < 3',
     })
       .populate({
@@ -238,83 +235,110 @@ export const getAmountProgramsRegistered = async () => {
  * @param {*} param0
  * @returns lista de programas por linea de insvestigacion
  */
-export const getProgramsListByLineSearchWithOutAssignmentRepository = async ({
-  id_user,
-  role,
-  line_research,
-  skip,
-  flag,
-}) => {
-  skip = skip > 0 ? (skip - 1) * constants.ITEM_PER_PAG : skip;
+export const getProgramsListByCommissionsRoleWithOutAssignmentRepository =
+  async ({ id_user, role, commissionsRole, skip, flag }) => {
+    skip = skip > 0 ? (skip - 1) * constants.ITEM_PER_PAG : skip;
 
-  try {
-    if (role === userRoles.coordinator) {
-      const count =
-        flag === flagsToGetPrograms.assigned
-          ? await ProgramModel.count({
-              line_research,
-              id_assignedBy: id_user,
-              // assigned_to: { $exists: false },
-              // status_project: 'por aprobar',
-            })
-          : await ProgramModel.count({
-              line_research,
-              id_assignedBy: { $exists: false },
-              assigned_to: { $exists: false },
-              // status_project: 'por aprobar',
-            });
-
-      const projectsList =
-        flag === flagsToGetPrograms.assigned
-          ? await ProgramModel.find({
-              line_research,
-              id_assignedBy: id_user,
-              // assigned_to: { $exists: false },
-              // status_project: 'por aprobar',
-            })
-              .populate({
-                path: 'assigned_to',
-                select: '_id name last_name email line_research',
+    try {
+      if (role === userRoles.coordinator) {
+        const count =
+          flag === flagsToGetPrograms.assigned
+            ? await ProgramModel.count({
+                commissionsRole,
+                id_assignedBy: id_user,
+                // assigned_to: { $exists: false },
+                // status_project: 'por aprobar',
               })
-              .skip(skip)
-              .limit(constants.ITEM_PER_PAG)
-              .sort({ createdAt: -1 })
-          : await ProgramModel.find({
-              line_research,
-              id_assignedBy: { $exists: false },
-              assigned_to: { $exists: false },
-              // status_project: 'por aprobar',
-            })
-              .populate({
-                path: 'assigned_to',
-                select: '_id name last_name email line_research',
+            : await ProgramModel.count({
+                commissionsRole,
+                id_assignedBy: { $exists: false },
+                assigned_to: { $exists: false },
+                // status_project: 'por aprobar',
+              });
+
+        const projectsList =
+          flag === flagsToGetPrograms.assigned
+            ? await ProgramModel.find({
+                commissionsRole,
+                id_assignedBy: id_user,
+                // assigned_to: { $exists: false },
+                // status_project: 'por aprobar',
               })
-              .skip(skip)
-              .limit(constants.ITEM_PER_PAG)
-              .sort({ createdAt: -1 });
+                .populate({
+                  path: 'assigned_to',
+                  select: '_id name last_name email commissionsRole',
+                })
+                .skip(skip)
+                .limit(constants.ITEM_PER_PAG)
+                .sort({ createdAt: -1 })
+            : await ProgramModel.find({
+                commissionsRole,
+                id_assignedBy: { $exists: false },
+                assigned_to: { $exists: false },
+                // status_project: 'por aprobar',
+              })
+                .populate({
+                  path: 'assigned_to',
+                  select: '_id name last_name email commissionsRole',
+                })
+                .skip(skip)
+                .limit(constants.ITEM_PER_PAG)
+                .sort({ createdAt: -1 });
 
-      const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
+        const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
 
-      return {
-        pagination: {
-          count,
-          pageCount,
-        },
-        data: projectsList,
-      };
-    }
+        return {
+          pagination: {
+            count,
+            pageCount,
+          },
+          data: projectsList,
+        };
+      }
 
-    if (role === userRoles.evaluator) {
+      if (role === userRoles.evaluator) {
+        const count = await ProgramModel.count({
+          commissionsRole,
+          assigned_to: id_user,
+          status_program: 'por aprobar',
+        });
+
+        const projectsList = await ProgramModel.find({
+          commissionsRole,
+          assigned_to: id_user,
+          status_program: 'por aprobar',
+        })
+          .populate({
+            path: 'assigned_to',
+            select: '_id name last_name email commissionsRole',
+          })
+          .skip(skip)
+          .limit(constants.ITEM_PER_PAG)
+          .sort({ createdAt: -1 });
+
+        const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
+
+        return {
+          pagination: {
+            count,
+            pageCount,
+          },
+          data: projectsList,
+        };
+      }
+
       const count = await ProgramModel.count({
-        line_research,
-        assigned_to: id_user,
-        status_program: 'por aprobar',
+        commissionsRole,
+        id_assignedBy: { $exists: false },
+        assigned_to: { $exists: false },
+        status_project: 'por aprobar',
       });
 
       const projectsList = await ProgramModel.find({
         line_research,
-        assigned_to: id_user,
-        status_program: 'por aprobar',
+        id_assignedBy: { $exists: false },
+        assigned_to: { $exists: false },
+        status_project: 'por aprobar',
       })
         .populate({
           path: 'assigned_to',
@@ -333,43 +357,11 @@ export const getProgramsListByLineSearchWithOutAssignmentRepository = async ({
         },
         data: projectsList,
       };
+    } catch (error) {
+      console.log('Error al actualizar proyecto.', error);
+      return null;
     }
-
-    const count = await ProgramModel.count({
-      line_research,
-      id_assignedBy: { $exists: false },
-      assigned_to: { $exists: false },
-      status_project: 'por aprobar',
-    });
-
-    const projectsList = await ProgramModel.find({
-      line_research,
-      id_assignedBy: { $exists: false },
-      assigned_to: { $exists: false },
-      status_project: 'por aprobar',
-    })
-      .populate({
-        path: 'assigned_to',
-        select: '_id name last_name email line_research',
-      })
-      .skip(skip)
-      .limit(constants.ITEM_PER_PAG)
-      .sort({ createdAt: -1 });
-
-    const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
-
-    return {
-      pagination: {
-        count,
-        pageCount,
-      },
-      data: projectsList,
-    };
-  } catch (error) {
-    console.log('Error al actualizar proyecto.', error);
-    return null;
-  }
-};
+  };
 
 /**
  * @param {*} id_program

@@ -18,7 +18,7 @@ import {
   sendEmailNotificationProjectCreated,
   searchProjectByQuery,
   assignProjectsToEvaluatorsController,
-  getProjectsByLineSearchWithoutAssignmentController,
+  getProjectsByCommissionsRoleWithoutAssignmentController,
 } from '../../controllers/projects/projects.controller.js';
 import {
   validateFormatLoginUser,
@@ -31,7 +31,7 @@ import {
 import { validateToken } from '../../middlewares/admin/verificateToken.middleware.js';
 import {
   getProgramByIdController,
-  getProgramsByLineSearchWithoutAssignmentController,
+  getProgramsByCommissionsRoleWithoutAssignmentController,
   getProgramsByStatusController,
   getProgramsByIdUserController,
   registerNewProgramController,
@@ -94,9 +94,9 @@ router.post('/test-emails', validateToken, sendEmailNotificationProjectCreated);
 router.get('/search-projects', validateToken, searchProjectByQuery);
 
 router.get(
-  '/get-projects-by-line-search',
+  '/get-projects-by-commissions-role',
   validateToken,
-  getProjectsByLineSearchWithoutAssignmentController
+  getProjectsByCommissionsRoleWithoutAssignmentController
 );
 
 router.post(
@@ -115,9 +115,9 @@ router.get(
 );
 
 router.get(
-  '/get-programs-by-line-search',
+  '/get-programs-by-commissions-role',
   validateToken,
-  getProgramsByLineSearchWithoutAssignmentController
+  getProgramsByCommissionsRoleWithoutAssignmentController
 );
 
 router.post(

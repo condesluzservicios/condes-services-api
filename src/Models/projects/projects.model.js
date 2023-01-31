@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
-import { programsAndProjectsStatus } from '../../constants/entities.js';
-const { Types, Schema, models, model } = mongoose;
+import {
+  commissionsRoles,
+  programsAndProjectsStatus,
+} from '../../constants/entities.js';
+const { Schema, models, model } = mongoose;
 
 const registerProjectsSchema = new Schema(
   {
@@ -102,6 +105,11 @@ const registerProjectsSchema = new Schema(
       type: String,
       required: false,
     },
+    commissionsRole: {
+      type: String,
+      required: false,
+      default: Object.keys(commissionsRoles)[0],
+    },
 
     // * financed
 
@@ -172,7 +180,6 @@ const registerProjectsSchema = new Schema(
     program_associated: {
       type: Schema.Types.ObjectId,
       ref: 'Programs',
-      required: false,
     },
 
     project_code: {

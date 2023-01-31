@@ -115,18 +115,18 @@ export const getUsersListByIdRepository = async (id) => {
  * @param {*} role role to search
  * @returns list of users with role
  */
-export const getUsersByRoleAndLineSearchRepository = async (
+export const getUsersByRoleAndCommissionsRoleRepository = async (
   role,
-  line_research,
+  commissionsRole,
   skip = 0
 ) => {
   let results = [];
   skip = skip > 0 ? (skip - 1) * constants.ITEM_PER_PAG : skip;
 
   try {
-    const count = await UserModel.find({ role, line_research }).count();
+    const count = await UserModel.find({ role, commissionsRole }).count();
 
-    const userList = await UserModel.find({ role, line_research })
+    const userList = await UserModel.find({ role, commissionsRole })
       .skip(skip)
       .limit(constants.ITEM_PER_PAG)
       .sort({ createdAt: -1 });
@@ -137,7 +137,7 @@ export const getUsersByRoleAndLineSearchRepository = async (
       data.name = item.name;
       data.last_name = item.last_name;
       data.email = item.email;
-      data.line_research = item.line_research;
+      data.commissionsRole = item.commissionsRole;
       data.role = item.role;
       results.push(data);
       data = {};

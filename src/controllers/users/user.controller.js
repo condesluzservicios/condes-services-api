@@ -19,44 +19,45 @@ export const login = async (req, res) => {
   try {
     const user = await services.getUserByEmail(req.body.email);
 
-    if (user) {
-      const isValidPassword = await handlePasswords.comparePasswords(
-        req.body.password,
-        user.data[0].password
-      );
-
-      if (!isValidPassword) {
-        return res.json({
-          msg: 'Error en correo o contraseña',
-          success: false,
-          data: [],
-        });
-      }
-
-      const token = await auth.generateToken(user.data[0]._id);
-
-      res.json({
-        msg: 'success',
-        success: true,
-        data: {
-          id: user.data[0]._id,
-          email: user.data[0].email,
-          name: user.data[0].name,
-          last_name: user.data[0].last_name,
-          role: user.data[0].role,
-          line_research: user.data[0].line_research
-            ? user.data[0].line_research
-            : null,
-          token,
-        },
-      });
-    } else {
+    if (!user) {
       res.json({
         msg: 'Error en correo o contraseña.',
         success: false,
         data: [],
       });
+      return;
     }
+
+    const isValidPassword = await handlePasswords.comparePasswords(
+      req.body.password,
+      user.data[0].password
+    );
+
+    if (!isValidPassword) {
+      return res.json({
+        msg: 'Error en correo o contraseña',
+        success: false,
+        data: [],
+      });
+    }
+
+    const token = await auth.generateToken(user.data[0]._id);
+
+    res.json({
+      msg: 'success',
+      success: true,
+      data: {
+        id: user.data[0]._id,
+        email: user.data[0].email,
+        name: user.data[0].name,
+        last_name: user.data[0].last_name,
+        role: user.data[0].role,
+        commissionsRole: user.data[0].commissionsRole
+          ? user.data[0].commissionsRole
+          : null,
+        token,
+      },
+    });
   } catch (error) {
     console.log('error al iniciar sesion ->', error);
     res.json({
@@ -148,13 +149,14 @@ export const createNewUserForAdmin = async (req, res) => {
   });
 };
 
-export const getUsersByRoleAndLineSearchController = async (req, res) => {
-  const { skip, role, line_research } = req.query;
+export const getUsersByRoleAndCommissionsRoleController = async (req, res) => {
+  const { skip, role, commissionsRole } = req.query;
 
-  const usersList = await userRepository.getUsersByRoleAndLineSearchRepository(
-    role,
-    line_research,
-    Number(skip) || 0
-  );
+  const usersList =
+    await userRepository.getUsersByRoleAndCommissionsRoleRepository(
+      role,
+      commissionsRole,
+      Number(skip) || 0
+    );
   res.json(usersList);
 };

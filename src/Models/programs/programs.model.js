@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
-import { statusProgramsAndProject } from '../../constants/entities.js';
+import {
+  commissionsRoles,
+  statusProgramsAndProject,
+} from '../../constants/entities.js';
 const { Schema, models, model } = mongoose;
 
 const ProgramSchema = new Schema(
@@ -56,6 +59,12 @@ const ProgramSchema = new Schema(
       type: String,
       required: false,
     },
+    commissionsRole: {
+      type: String,
+      required: false,
+      default: Object.keys(commissionsRoles)[0],
+    },
+
     personal_payment_request: {
       type: {
         personal_payment_request_bsd: Number,
