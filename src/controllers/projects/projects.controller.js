@@ -2,9 +2,16 @@ import * as services from '../../services/projects/projects.service.js';
 import * as emailServiceProject from '../../services/emails/emails.service.js';
 import * as projectsRepository from '../../repositories/projects.repositories/projects.repository.js';
 import { userRoles } from '../../constants/entities.js';
+import { updateProgramAssociateProject } from '../../repositories/programs.repositories/programs.repository.js';
 
-export const saveNewProject = async (req, res) => {
-  const saved = await projectsRepository.saveNewProject(req.body);
+export const saveNewProjectController = async (req, res) => {
+  const body = req.body;
+  const saved = await projectsRepository.saveNewProject(body);
+
+  if (body.id_program) {
+    await updateProgramAssociateProject(body.id_program, saved._id);
+  }
+
   if (!saved) {
     res.json({
       msg: 'Error al registrar proyecto',

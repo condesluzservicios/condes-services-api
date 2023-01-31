@@ -1,4 +1,8 @@
-import { flagsToGetProjects, userRoles } from '../../constants/entities.js';
+import {
+  flagsToGetProjects,
+  programsAndProjectsStatus,
+  userRoles,
+} from '../../constants/entities.js';
 import { constants } from '../../constants/pagination.constants.js';
 import ProjectsModel from '../../Models/projects/projects.model.js';
 
@@ -157,12 +161,7 @@ export const getProjectListByLineSearchWithOutAssignmentRepository = async ({
               line_research,
               id_assignedBy: { $exists: false },
               assigned_to: { $exists: false },
-              // status_project: 'Por aprobar',
             })
-              .populate({
-                path: 'assigned_to',
-                select: '_id name last_name email line_research',
-              })
               .skip(skip)
               .limit(constants.ITEM_PER_PAG)
               .sort({ createdAt: -1 });
@@ -182,13 +181,13 @@ export const getProjectListByLineSearchWithOutAssignmentRepository = async ({
       const count = await ProjectsModel.count({
         line_research,
         assigned_to: id_user,
-        status_project: 'Por aprobar',
+        status_project: programsAndProjectsStatus.toBeApproved,
       });
 
       const projectsList = await ProjectsModel.find({
         line_research,
         assigned_to: id_user,
-        status_project: 'Por aprobar',
+        status_project: programsAndProjectsStatus.toBeApproved,
       })
         .populate({
           path: 'assigned_to',
@@ -209,36 +208,36 @@ export const getProjectListByLineSearchWithOutAssignmentRepository = async ({
       };
     }
 
-    const count = await ProjectsModel.count({
-      line_research,
-      id_assignedBy: { $exists: false },
-      assigned_to: { $exists: false },
-      status_project: 'Por aprobar',
-    });
+    // const count = await ProjectsModel.count({
+    //   line_research,
+    //   id_assignedBy: { $exists: false },
+    //   assigned_to: { $exists: false },
+    //   status_project: programsAndProjectsStatus.toBeApproved,
+    // });
 
-    const projectsList = await ProjectsModel.find({
-      line_research,
-      id_assignedBy: { $exists: false },
-      assigned_to: { $exists: false },
-      status_project: 'Por aprobar',
-    })
-      .populate({
-        path: 'assigned_to',
-        select: '_id name last_name email line_research',
-      })
-      .skip(skip)
-      .limit(constants.ITEM_PER_PAG)
-      .sort({ createdAt: -1 });
+    // const projectsList = await ProjectsModel.find({
+    //   line_research,
+    //   id_assignedBy: { $exists: false },
+    //   assigned_to: { $exists: false },
+    //   status_project: programsAndProjectsStatus.toBeApproved,
+    // })
+    //   .populate({
+    //     path: 'assigned_to',
+    //     select: '_id name last_name email line_research',
+    //   })
+    //   .skip(skip)
+    //   .limit(constants.ITEM_PER_PAG)
+    //   .sort({ createdAt: -1 });
 
-    const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
+    // const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
 
-    return {
-      pagination: {
-        count,
-        pageCount,
-      },
-      data: projectsList,
-    };
+    // return {
+    //   pagination: {
+    //     count,
+    //     pageCount,
+    //   },
+    //   data: projectsList,
+    // };
   } catch (error) {
     console.log('Error al actualizar proyecto.', error);
     return null;

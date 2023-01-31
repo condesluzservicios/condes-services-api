@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { programsAndProjectsStatus } from '../../constants/entities.js';
+import { statusProgramsAndProject } from '../../constants/entities.js';
 const { Schema, models, model } = mongoose;
 
 const ProgramSchema = new Schema(
@@ -50,7 +50,11 @@ const ProgramSchema = new Schema(
     status_program: {
       type: String,
       required: true,
-      default: programsAndProjectsStatus.toBeApproved,
+      default: statusProgramsAndProject.toBeApproved,
+    },
+    line_research: {
+      type: String,
+      required: false,
     },
     personal_payment_request: {
       type: {

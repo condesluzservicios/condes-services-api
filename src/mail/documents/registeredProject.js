@@ -1,3 +1,4 @@
+// <p><b>Área del proyecto:</b> ${data.project_area}</p>
 export const formatEmailRegisteredProject = (data) => {
   const format = `<main style="font-family: Arial, Helvetica, sans-serif;background-color:gainsboro; display: flex; justify-content:center; align-items: center; flex-direction:column; margin:0px;">
   <img width="150px" src="https://i.ibb.co/7jGPPg1/logo512.png" alt="logo-condes">
@@ -27,13 +28,12 @@ export const formatEmailRegisteredProject = (data) => {
 
     <p><b>Estatus:</b> ${data.status_project ? 'Aprobado' : 'Por aprobar'}</p>
     
-    <p><b>Área del proyecto:</b> ${data.project_area}</p>
 
     <p><b>Línea de investigacion:</b> ${data.line_research}</p>
 
     <p><b>Tipo de proyecto:</b> ${data.type_project}</p>
 
-    <p><b>Código del programa:</b> ${'#' + data.project_code}</p>
+    <p><b>Código del proyecto:</b> ${'#' + data.project_code}</p>
 
     <h3>Investigador principal</h3>
 
@@ -215,6 +215,20 @@ export const formatEmailNotificationAssignmentProjectToEvaluator = (data) => {
     <p>Asignado por: ${data.assignmentBy}</p>
     <p>Nombre del proyecto: ${data.title}</p>
     <p>Proyecto número: ${data.project_code}</p>
+  </div
+  <div>`;
+};
+
+export const formatEmailNotificationAssignmentProgramToEvaluator = (data) => {
+  return `<main style="font-family: Arial, Helvetica, sans-serif;background-color:gainsboro; display: flex; justify-content:center; align-items: center; flex-direction:column; margin:0px;">
+  <img width="150px" src="https://i.ibb.co/7jGPPg1/logo512.png" alt="logo-condes" />
+  
+  <h1>Un programa le ha sido asignado.</h1>
+
+  <div>
+    <p>Asignado por: ${data.assignmentBy}</p>
+    <p>Nombre del programa: ${data.title}</p>
+    <p>Programa número: ${data.project_code}</p>
   </div
   <div>`;
 };

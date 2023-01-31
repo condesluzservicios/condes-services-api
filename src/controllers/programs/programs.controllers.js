@@ -1,56 +1,34 @@
+import { userRoles } from '../../constants/entities.js';
 import {
-  getAmountProgramsRegistered,
   getProgramById,
-  getProgramsList,
-  getProgramsWithProjectsPendingRegistrationByIdUser,
-  registerNewProgram,
+  searchProgramsList,
+  getProgramsListByLineSearchWithOutAssignmentRepository,
+  getProgramsByIdUser,
+  getProgramsWithProjectsPendingRegistration,
+  updateStatusProgram,
 } from '../../repositories/programs.repositories/programs.repository.js';
-import { generateSequentialNumberProgramAndProject } from '../../utils/projects.utils.js';
+import {
+  assignProgramToEvaluatorsService,
+  registerNewProgramService,
+} from '../../services/programs/programs.services.js';
 
 export const registerNewProgramController = async (req, res) => {
   const body = req.body;
 
-  const amountPrograms = await getAmountProgramsRegistered();
+  const programSaved = await registerNewProgramService(body);
 
-  const code = generateSequentialNumberProgramAndProject(
-    amountPrograms + 1,
-    body.type_program
-  );
-
-  body.program_code = code;
-
-  const programSaved = await registerNewProgram(body);
-
-  if (!programSaved) {
-    res.json({
-      success: false,
-      msg: 'Error al registrar programa.',
-      data: null,
-    });
-    return;
-  }
-
-  res.json({
-    success: true,
-    msg: 'Programa registrado exitosamente.',
-    data: programSaved,
-  });
+  res.json(programSaved);
 };
 
-export const getProgramsWithProjectsPendingRegistrationController = async (
-  req,
-  res
-) => {
+export const getProgramsByIdUserController = async (req, res) => {
   const { id_user } = req.query;
 
-  const programsList = await getProgramsWithProjectsPendingRegistrationByIdUser(
-    id_user
-  );
+  const programsList = await getProgramsByIdUser(id_user);
 
   if (!programsList) {
     res.json({
       success: false,
-      msg: 'Error al obtener programas.',
+      msg: 'Error al obtener tus programas.',
       data: null,
     });
     return;
@@ -87,11 +65,125 @@ export const getProgramByIdController = async (req, res) => {
 export const getProgramsByStatusController = async (req, res) => {
   const { skip, flag } = req.query;
 
-  const programsList = await getProgramsList(flag, Number(skip) | 0);
+  const programsList = await searchProgramsList(flag, Number(skip) | 0);
 
   res.json({
     success: true,
     message: 'Lista de programas',
     data: programsList,
+  });
+};
+
+export const getProgramsByLineSearchWithoutAssignmentController = async (
+  req,
+  res
+) => {
+  const { id_user, role, line_research, skip, flag } = req.query;
+
+  const programs = await getProgramsListByLineSearchWithOutAssignmentRepository(
+    {
+      id_user: id_user,
+      role: role,
+      line_research,
+      skip: Number(skip) || 0,
+      flag,
+    }
+  );
+
+  if (!programs) {
+    res.json({
+      msg: 'Error al obtener programas',
+      success: false,
+      data: null,
+    });
+    return;
+  }
+
+  res.json({
+    success: true,
+    message: 'Lista de programas',
+    data: programs,
+  });
+};
+
+export const getProgramsWithProjectsPendingRegistrationController = async (
+  req,
+  res
+) => {
+  const { id_user, skip } = req.query;
+
+  const programs = await getProgramsWithProjectsPendingRegistration(
+    id_user,
+    Number(skip) | 0
+  );
+
+  if (!programs) {
+    res.json({
+      success: false,
+      message: 'Error al obtener programas',
+      data: null,
+    });
+    return;
+  }
+
+  res.json({
+    success: false,
+    message: 'Lista de programas disponibles',
+    data: programs,
+  });
+};
+
+export const assignProgramToEvaluatorsController = async (req, res) => {
+  const { id_program, id_assignedBy, id_evaluator, role } = req.body;
+
+  if (id_assignedBy === id_evaluator) {
+    res.json({
+      success: false,
+      msg: 'No se puede asignar el proyecto al mismo usuario que lo asigna',
+      data: null,
+    });
+
+    return;
+  }
+
+  if (role !== userRoles.coordinator) {
+    res.json({
+      success: false,
+      msg: 'No tiene permiso para esta acción',
+      data: null,
+    });
+
+    return;
+  }
+
+  const assigned = await assignProgramToEvaluatorsService(
+    id_program,
+    id_assignedBy,
+    id_evaluator
+  );
+
+  res.json(assigned);
+};
+
+export const updateStatusProgramController = async (req, res) => {
+  const { id_program, isApproval } = req.body;
+
+  const updatedProgram = await updateStatusProgram(id_program, isApproval);
+
+  if (!updatedProgram) {
+    res.json({
+      success: false,
+      message: 'Error al actualizar programa',
+      data: null,
+    });
+    return;
+  }
+
+  // TODO: notificar de esta actualizacion por correo
+
+  res.json({
+    success: true,
+    message: 'Programa actualizado exitosamente.',
+    data: updatedProgram,
   });
 };

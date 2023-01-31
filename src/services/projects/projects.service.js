@@ -7,6 +7,7 @@ import * as emailsService from '../../services/emails/emails.service.js';
 import { generateSequentialNumberProgramAndProject } from '../../utils/projects.utils.js';
 import connectMailer from '../../mail/config.js';
 import { formatEmailNotificationAssignmentProjectToEvaluator } from '../../mail/documents/registeredProject.js';
+import { statusProgramsAndProject } from '../../constants/entities.js';
 
 export const createNewProject = async (data) => {
   try {
@@ -206,7 +207,9 @@ export const updateApprovalProject = async (data) => {
     const statusProjectUpdated = await ProjectsModel.findByIdAndUpdate(
       data.id,
       {
-        status_project: data.isApproval ? 'Aprobado' : 'Desaprobado',
+        status_project: data.isApproval
+          ? statusProgramsAndProject.approved
+          : statusProgramsAndProject.disapproved,
       },
       { upsert: true }
     );
@@ -345,9 +348,9 @@ export const assignProjectsToEvaluators = async (
 
     if (!notification.accepted.length > 0) {
       return {
-        msg: 'Error al enviar correo de asignación de proyecto.',
-        success: false,
-        data: [],
+        msg: 'Proyecto asignado exitosamente. Error al enviar correo de asignación de proyecto.',
+        success: true,
+        data: assigned,
       };
     }
 

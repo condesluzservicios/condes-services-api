@@ -1,3 +1,9 @@
+export const statusProgramsAndProject = {
+  toBeApproved: 'por aprobar',
+  approved: 'aprobado',
+  disapproved: 'rechazado',
+};
+
 export const typesProjects = {
   'no financiado': 'NF-',
   financiado: 'FI-',
@@ -12,6 +18,11 @@ export const userRoles = {
 };
 
 export const flagsToGetProjects = {
+  assigned: 'asignados',
+  toBeAssigned: 'por asignar',
+};
+
+export const flagsToGetPrograms = {
   assigned: 'asignados',
   toBeAssigned: 'por asignar',
 };

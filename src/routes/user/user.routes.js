@@ -9,7 +9,7 @@ import {
   updateDataUser,
 } from '../../controllers/users/user.controller.js';
 import {
-  saveNewProject,
+  saveNewProjectController,
   getPaginationAllProjects,
   getProjectById,
   getProjectByIdUser,
@@ -31,9 +31,13 @@ import {
 import { validateToken } from '../../middlewares/admin/verificateToken.middleware.js';
 import {
   getProgramByIdController,
+  getProgramsByLineSearchWithoutAssignmentController,
   getProgramsByStatusController,
-  getProgramsWithProjectsPendingRegistrationController,
+  getProgramsByIdUserController,
   registerNewProgramController,
+  getProgramsWithProjectsPendingRegistrationController,
+  assignProgramToEvaluatorsController,
+  updateStatusProgramController,
 } from '../../controllers/programs/programs.controllers.js';
 
 router.post('/signin', validateFormatLoginUser, validateExistUser, signIn);
@@ -63,7 +67,7 @@ router.post(
   '/register-project',
   validateToken,
   validateDataProjectStepOne,
-  saveNewProject
+  saveNewProjectController
 );
 
 router.get(
@@ -107,12 +111,36 @@ router.post('/register-program', validateToken, registerNewProgramController);
 router.get(
   '/get-programs-by-id-user',
   validateToken,
-  getProgramsWithProjectsPendingRegistrationController
+  getProgramsByIdUserController
+);
+
+router.get(
+  '/get-programs-by-line-search',
+  validateToken,
+  getProgramsByLineSearchWithoutAssignmentController
+);
+
+router.post(
+  '/assign-program-evaluator',
+  validateToken,
+  assignProgramToEvaluatorsController
+);
+
+router.put(
+  '/update-approval-program',
+  validateToken,
+  updateStatusProgramController
 );
 
 // * admin
 router.get('/get-program-by-id', validateToken, getProgramByIdController);
 
 router.get('/get-all-programs', validateToken, getProgramsByStatusController);
+
+router.get(
+  '/get-programs-with-projects-pending-registration',
+  validateToken,
+  getProgramsWithProjectsPendingRegistrationController
+);
 
 export default router;

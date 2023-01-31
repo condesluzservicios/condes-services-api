@@ -169,6 +169,12 @@ const registerProjectsSchema = new Schema(
     //   unique: true,
     // },
 
+    program_associated: {
+      type: Schema.Types.ObjectId,
+      ref: 'Programs',
+      required: false,
+    },
+
     project_code: {
       type: String,
       required: false,
