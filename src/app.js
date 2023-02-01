@@ -16,6 +16,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'assets')));
 
+app.get('/', (_req, res) => {
+  res.json({
+    message: 'Hello from server',
+  });
+});
+
+app.get('/api', (_req, res) => {
+  res.json({
+    message: 'Hello from server api',
+  });
+});
+
 app.use('/api', router);
 
 app.listen(app.get('PORT'), async () => {
