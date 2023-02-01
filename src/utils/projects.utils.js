@@ -5,7 +5,10 @@ import { typesProjects } from '../constants/entities.js';
  * @param {*} flag category project
  * @returns serial code project
  */
-export const generateSequentialNumber = (last_number, flag) => {
+export const generateSequentialNumberProgramAndProject = (
+  last_number,
+  flag
+) => {
   const serial = typesProjects[flag];
 
   const current_number = '0000000';

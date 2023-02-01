@@ -95,6 +95,40 @@ export const sendEmailNotificationProjectApproval = async (
   }
 };
 
+export const sendEmailNotificationUserCreated = async (user_data) => {
+  try {
+    const resSendMail = await connectMailer({
+      email_dest: user_data.email,
+      subject: 'Credenciales de usuario.',
+      format:
+        formatsEmailsProject.formatEmailNotificationUserRegisterFromAdmin(
+          user_data
+        ),
+    });
+
+    if (!resSendMail.accepted.length > 0) {
+      return {
+        msg: 'Error al enviar correo para notificar al nuevo usuario.',
+        success: false,
+        data: [],
+      };
+    }
+
+    return {
+      msg: `Un correo a ${user_data.email} con las credenciales de usuario fue enviado exitosamente.`,
+      success: true,
+      data: [],
+    };
+  } catch (error) {
+    console.log('Error al enviar credenciales de usuario ->', error);
+    return {
+      msg: 'Error al enviar credenciales de usuarios',
+      success: false,
+      data: error,
+    };
+  }
+};
+
 // * emergency
 export const getProjectById = async (idProject) => {
   try {

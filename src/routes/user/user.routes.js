@@ -9,7 +9,7 @@ import {
   updateDataUser,
 } from '../../controllers/users/user.controller.js';
 import {
-  saveNewProject,
+  saveNewProjectController,
   getPaginationAllProjects,
   getProjectById,
   getProjectByIdUser,
@@ -17,6 +17,8 @@ import {
   updateStatusProject,
   sendEmailNotificationProjectCreated,
   searchProjectByQuery,
+  assignProjectsToEvaluatorsController,
+  getProjectsByCommissionsRoleWithoutAssignmentController,
 } from '../../controllers/projects/projects.controller.js';
 import {
   validateFormatLoginUser,
@@ -27,6 +29,16 @@ import {
   validateDataProjectBySteps,
 } from '../../middlewares/users/validateUser.middleware.js';
 import { validateToken } from '../../middlewares/admin/verificateToken.middleware.js';
+import {
+  getProgramByIdController,
+  getProgramsByCommissionsRoleWithoutAssignmentController,
+  getProgramsByStatusController,
+  getProgramsByIdUserController,
+  registerNewProgramController,
+  getProgramsWithProjectsPendingRegistrationController,
+  assignProgramToEvaluatorsController,
+  updateStatusProgramController,
+} from '../../controllers/programs/programs.controllers.js';
 
 router.post('/signin', validateFormatLoginUser, validateExistUser, signIn);
 
@@ -55,7 +67,7 @@ router.post(
   '/register-project',
   validateToken,
   validateDataProjectStepOne,
-  saveNewProject
+  saveNewProjectController
 );
 
 router.get(
@@ -80,5 +92,55 @@ router.put('/update-approval-project', validateToken, updateStatusProject);
 router.post('/test-emails', validateToken, sendEmailNotificationProjectCreated);
 
 router.get('/search-projects', validateToken, searchProjectByQuery);
+
+router.get(
+  '/get-projects-by-commissions-role',
+  validateToken,
+  getProjectsByCommissionsRoleWithoutAssignmentController
+);
+
+router.post(
+  '/assign-project-evaluator',
+  validateToken,
+  assignProjectsToEvaluatorsController
+);
+
+// * programs
+router.post('/register-program', validateToken, registerNewProgramController);
+
+router.get(
+  '/get-programs-by-id-user',
+  validateToken,
+  getProgramsByIdUserController
+);
+
+router.get(
+  '/get-programs-by-commissions-role',
+  validateToken,
+  getProgramsByCommissionsRoleWithoutAssignmentController
+);
+
+router.post(
+  '/assign-program-evaluator',
+  validateToken,
+  assignProgramToEvaluatorsController
+);
+
+router.put(
+  '/update-approval-program',
+  validateToken,
+  updateStatusProgramController
+);
+
+// * admin
+router.get('/get-program-by-id', validateToken, getProgramByIdController);
+
+router.get('/get-all-programs', validateToken, getProgramsByStatusController);
+
+router.get(
+  '/get-programs-with-projects-pending-registration',
+  validateToken,
+  getProgramsWithProjectsPendingRegistrationController
+);
 
 export default router;

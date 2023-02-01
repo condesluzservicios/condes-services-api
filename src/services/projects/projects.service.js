@@ -1,14 +1,17 @@
 import ProjectsModel from '../../Models/projects/projects.model.js';
 import ParticipantsModel from '../../Models/projects/projectParticipants.model.js';
-import * as projectsRepository from '../../repositories/projects.repositories/projects.repository.js';
 import { constants } from '../../constants/pagination.constants.js';
+import * as projectsRepository from '../../repositories/projects.repositories/projects.repository.js';
+import { getUserByIdRepository } from '../../repositories/users.repositories/users.repository.js';
 import * as emailsService from '../../services/emails/emails.service.js';
-import { generateSequentialNumber } from '../../utils/projects.utils.js';
+import { generateSequentialNumberProgramAndProject } from '../../utils/projects.utils.js';
+import connectMailer from '../../mail/config.js';
+import { formatEmailNotificationAssignmentProjectToEvaluator } from '../../mail/documents/registeredProject.js';
+import { statusProgramsAndProject } from '../../constants/entities.js';
 
 export const createNewProject = async (data) => {
   try {
-    const newProject = new ProjectsModel(data);
-    const projectSaved = await newProject.save();
+    const projectSaved = await projectsRepository.saveNewProject(data);
 
     return {
       success: true,
@@ -26,64 +29,26 @@ export const createNewProject = async (data) => {
 };
 
 export const getPaginationAllProjects = async (skip = 0, flag) => {
-  let ProjectsList = [];
-  let count = 0;
+  const projectsList = await projectsRepository.getProjectsList(skip, flag);
 
-  try {
-    skip = (skip - 1) * constants.ITEM_PER_PAG;
-
-    if (flag === '') {
-      count = await ProjectsModel.estimatedDocumentCount();
-
-      ProjectsList = await ProjectsModel.find()
-        .skip(skip)
-        .limit(constants.ITEM_PER_PAG)
-        .sort({ createdAt: -1 });
-    } else {
-      ProjectsList = await ProjectsModel.find({
-        status_project: { $regex: `^${flag}$`, $options: 'i' },
-      })
-        .skip(skip)
-        .limit(constants.ITEM_PER_PAG)
-        .sort({ createdAt: -1 });
-
-      count = ProjectsList.length;
-    }
-
-    const pageCount = Math.ceil(count / constants.ITEM_PER_PAG); // 8 / 6 = 1,3
-
-    const data = {
-      pagination: {
-        count,
-        pageCount,
-      },
-      data: ProjectsList,
-    };
-
-    return {
-      msg: 'Lista de proyectos',
-      success: true,
-      data: data,
-    };
-  } catch (error) {
-    console.log('error al obtener proyectos ->', error);
+  if (!projectsList) {
     return {
       msg: 'Error al obtener proyectos',
       success: false,
-      data: error,
+      data: null,
     };
   }
+
+  return {
+    msg: 'Lista de proyectos',
+    success: false,
+    data: projectsList,
+  };
 };
 
 export const getProjectById = async (idProject) => {
   try {
-    const ProjectsList = await ProjectsModel.findById(idProject);
-
-    const participantsList = await ParticipantsModel.find({
-      id_project: idProject,
-    });
-
-    ProjectsList.participants = participantsList;
+    const ProjectsList = await projectsRepository.getProjectById(idProject);
 
     return {
       msg: 'Lista de proyecto',
@@ -142,7 +107,10 @@ export const updateProject = async (data, flag = '') => {
       const amountProjects =
         await projectsRepository.getAmountProjectsByCategoryProject();
 
-      const code = generateSequentialNumber(amountProjects, data.type_project);
+      const code = generateSequentialNumberProgramAndProject(
+        amountProjects,
+        data.type_project
+      );
 
       data.project_code = code;
 
@@ -239,7 +207,9 @@ export const updateApprovalProject = async (data) => {
     const statusProjectUpdated = await ProjectsModel.findByIdAndUpdate(
       data.id,
       {
-        status_project: data.isApproval ? 'Aprobado' : 'Desaprobado',
+        status_project: data.isApproval
+          ? statusProgramsAndProject.approved
+          : statusProgramsAndProject.disapproved,
       },
       { upsert: true }
     );
@@ -337,5 +307,66 @@ export const searchProjectsByQueryFromDb = async (query) => {
   }
 };
 
-// helpers
-const generateNewCodeProjectByFlag = async () => {};
+// * coordinates and evaluators
+export const assignProjectsToEvaluators = async (
+  id_project,
+  id_assignedBy,
+  id_evaluator
+) => {
+  try {
+    //* buscamos el proyecto
+    const projectSelected = await projectsRepository.getProjectById(id_project);
+
+    if (projectSelected.id_assignedBy || projectSelected.assigned_to) {
+      return {
+        success: false,
+        msg: 'Proyecto ya ha sido asignado.',
+        data: null,
+      };
+    }
+
+    projectSelected.id_assignedBy = id_assignedBy;
+    projectSelected.assigned_to = id_evaluator;
+
+    const evaluator_data = await getUserByIdRepository(id_evaluator);
+    const coordinator_data = await getUserByIdRepository(id_assignedBy);
+
+    const assigned = await projectsRepository.updateProject(id_project, {
+      id_assignedBy: id_assignedBy,
+      assigned_to: id_evaluator,
+    });
+
+    projectSelected.assignmentBy =
+      coordinator_data.name + ' ' + coordinator_data.last_name;
+
+    const notification = await connectMailer({
+      email_dest: evaluator_data.email,
+      subject: 'Notificación de asignación de proyecto.',
+      format:
+        formatEmailNotificationAssignmentProjectToEvaluator(projectSelected),
+    });
+
+    if (!notification.accepted.length > 0) {
+      return {
+        msg: 'Proyecto asignado exitosamente. Error al enviar correo de asignación de proyecto.',
+        success: true,
+        data: assigned,
+      };
+    }
+
+    // * notificar al evaluador que se le ha asignado un proyecto
+
+    return {
+      msg: 'Proyecto asignado exitosamente.',
+      success: true,
+      data: assigned,
+    };
+  } catch (error) {
+    console.log(`error al asignar projecto ${error}`);
+    return {
+      msg: 'Error al asignar proyecto',
+      success: true,
+      data: error,
+    };
+  }
+};

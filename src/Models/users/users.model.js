@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { commissionsRoles } from '../../constants/entities.js';
 const { Schema, model } = mongoose;
 
 const userSchema = new Schema(
@@ -26,6 +27,7 @@ const userSchema = new Schema(
     },
     isCompany: {
       type: Boolean,
+      default: false,
     },
     cod_number: {
       type: String,
@@ -35,6 +37,49 @@ const userSchema = new Schema(
       type: Number,
       required: false,
     },
+
+    // * evaluator / coordinator
+    identification_number: {
+      type: Number,
+      required: false,
+      unique: true,
+    },
+    expertise_area: {
+      type: String,
+      required: false,
+    },
+    line_research: {
+      type: String,
+      required: false,
+    },
+    commissionsRole: {
+      type: String,
+      required: true,
+      default: Object.keys(commissionsRoles)[0],
+    },
+    profession: {
+      type: String,
+      required: false,
+    },
+    // * evaluator
+    assigned_projects: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Projects',
+        },
+      ],
+      required: false,
+    },
+
+    // * coordinator
+    permissions: {
+      type: {
+        something: Boolean,
+        default: false,
+      },
+    },
+
     role: {
       type: String,
       default: 'user',

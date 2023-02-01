@@ -1,21 +1,13 @@
 import mongoose from 'mongoose';
 import {
   commissionsRoles,
-  programsAndProjectsStatus,
+  statusProgramsAndProject,
 } from '../../constants/entities.js';
 const { Schema, models, model } = mongoose;
 
-const registerProjectsSchema = new Schema(
+const ProgramSchema = new Schema(
   {
-    // * step one
-    personal_type: {
-      type: String,
-      required: true,
-    },
-    id_user: {
-      type: Schema.Types.ObjectId,
-      required: true,
-    },
+    // * responsible researcher
     name: {
       type: String,
       required: true,
@@ -32,76 +24,38 @@ const registerProjectsSchema = new Schema(
       type: Number,
       required: true,
     },
-    profession: {
-      type: String,
-      required: true,
-    },
-    specialty: {
-      type: String,
-      required: true,
-    },
-    faculty_core: {
-      type: String,
-      required: true,
-    },
-    status_project: {
-      type: String,
-      required: true,
-      default: programsAndProjectsStatus.toBeApproved,
-    },
-
-    // * teach
-
-    category: {
-      type: String,
-      required: false,
-    },
-    last_date_promotion: {
-      type: Date,
-      required: false,
-    },
-
-    // * teach
-
-    research_unit: {
-      type: String,
-      required: true,
-    },
     email: {
       type: String,
       required: true,
     },
     cod_number: {
       type: String,
-      required: false,
+      required: true,
     },
     phone: {
       type: Number,
-      required: false,
-    },
-    dedication: {
-      type: String,
       required: true,
     },
 
-    // * step two
+    // * program data
     title: {
       type: String,
-      required: false,
+      required: true,
     },
-    type_project: {
+    type_program: {
       type: String,
-      required: false,
+      required: true,
     },
-    project_area: {
+    general_objective: {
       type: String,
-      required: false,
+      required: true,
+    },
+    status_program: {
+      type: String,
+      required: true,
+      default: statusProgramsAndProject.toBeApproved,
     },
     line_research: {
-      type: String,
-      required: false,
-    },
-    type_research: {
       type: String,
       required: false,
     },
@@ -110,8 +64,6 @@ const registerProjectsSchema = new Schema(
       required: false,
       default: Object.keys(commissionsRoles)[0],
     },
-
-    // * financed
 
     personal_payment_request: {
       type: {
@@ -169,87 +121,24 @@ const registerProjectsSchema = new Schema(
       required: false,
     },
 
-    // * end financed
-
-    // program_code: {
-    //   type: String,
-    //   required: false,
-    //   unique: true,
-    // },
-
-    program_associated: {
-      type: Schema.Types.ObjectId,
-      ref: 'Programs',
-    },
-
-    project_code: {
+    program_code: {
       type: String,
       required: false,
       unique: true,
     },
-
-    // * step three
-    project_summary: {
-      type: String,
-      required: false,
-    },
-    general_objective: {
-      type: String,
-      required: false,
-    },
-    specific_objectives: {
-      type: String,
-      required: false,
-    },
-    hypothesis: {
-      type: String,
-      required: false,
-    },
-    methodology_used: {
-      type: String,
-      required: false,
-    },
-    feasibility_research: {
-      type: String,
-      required: false,
-    },
-    chronogram_activities: {
-      type: {
-        file: {
-          id: String,
-          url: String,
-        },
-        name: String,
-      },
-      required: false,
+    created_by: {
+      type: Schema.Types.ObjectId,
+      ref: 'users',
+      required: true,
     },
 
-    // * step four
-    number_participants: {
-      type: Number,
-      required: false,
-    },
-    participants: {
+    projects: {
       type: [
         {
           type: Schema.Types.ObjectId,
-          ref: 'projectParticipants',
+          ref: 'Projects',
         },
       ],
-    },
-
-    // * step five
-    documents: {
-      type: [
-        {
-          file: {
-            id: String,
-            url: String,
-          },
-          name: String,
-        },
-      ],
-      required: false,
     },
 
     id_assignedBy: {
@@ -267,4 +156,4 @@ const registerProjectsSchema = new Schema(
   }
 );
 
-export default models.Projects || model('Projects', registerProjectsSchema);
+export default models.Programs || model('Programs', ProgramSchema);
