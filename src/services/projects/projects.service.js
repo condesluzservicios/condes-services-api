@@ -1,5 +1,6 @@
 import ProjectsModel from '../../Models/projects/projects.model.js';
 import ParticipantsModel from '../../Models/projects/projectParticipants.model.js';
+import { typesProjects, typesProjectsKeys } from '../../constants/entities.js';
 import { constants } from '../../constants/pagination.constants.js';
 import * as projectsRepository from '../../repositories/projects.repositories/projects.repository.js';
 import { getUserByIdRepository } from '../../repositories/users.repositories/users.repository.js';
@@ -204,15 +205,37 @@ export const updateProject = async (data, flag = '') => {
 
 export const updateApprovalProject = async (data) => {
   try {
-    const statusProjectUpdated = await ProjectsModel.findByIdAndUpdate(
+    const projectSelected = await projectsRepository.getProjectById(data.id);
+
+    if (
+      projectSelected?.type_project === typesProjectsKeys.financiado &&
+      !projectSelected?.grant_application_for_project_approval
+    ) {
+      return {
+        msg: 'Debe proporcionar una solicitud de subvencion.',
+        success: false,
+        data: [],
+      };
+    }
+
+    const statusProjectUpdated = await projectsRepository.updateProject(
       data.id,
       {
         status_project: data.isApproval
           ? statusProgramsAndProject.approved
           : statusProgramsAndProject.disapproved,
-      },
-      { upsert: true }
+      }
     );
+
+    // ProjectsModel.findByIdAndUpdate(
+    //   data.id,
+    //   {
+    //     status_project: data.isApproval
+    //       ? statusProgramsAndProject.approved
+    //       : statusProgramsAndProject.disapproved,
+    //   },
+    //   { upsert: true }
+    // );
 
     if (!statusProjectUpdated) {
       return {

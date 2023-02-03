@@ -168,6 +168,16 @@ const registerProjectsSchema = new Schema(
       },
       required: false,
     },
+    grant_application_for_project_approval: {
+      type: {
+        file: {
+          id: String,
+          url: String,
+        },
+        name: String,
+      },
+      required: false,
+    },
 
     // * end financed
 

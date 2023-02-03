@@ -49,10 +49,35 @@ export const getProjectByIdUser = async (req, res) => {
   res.json(projectsList);
 };
 
-export const updateProject = async (req, res) => {
+export const updateProjectByFlagController = async (req, res) => {
   const { flag } = req.query;
   const updated = await services.updateProject(req.body, flag);
   res.json(updated);
+};
+
+export const updateProjectController = async (req, res) => {
+  const body = req.body;
+
+  const updatedProject = await projectsRepository.updateProject(
+    body.id_project,
+    body
+  );
+
+  if (!updatedProject) {
+    res.json({
+      message: 'Error al actualizar projecto.',
+      success: true,
+      data: updatedProject,
+    });
+
+    return;
+  }
+
+  res.json({
+    message: 'Projecto actualizado correctamente.',
+    success: true,
+    data: updatedProject,
+  });
 };
 
 export const updateStatusProject = async (req, res) => {

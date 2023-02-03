@@ -13,12 +13,13 @@ import {
   getPaginationAllProjects,
   getProjectById,
   getProjectByIdUser,
-  updateProject,
+  updateProjectByFlagController,
   updateStatusProject,
   sendEmailNotificationProjectCreated,
   searchProjectByQuery,
   assignProjectsToEvaluatorsController,
   getProjectsByCommissionsRoleWithoutAssignmentController,
+  updateProjectController,
 } from '../../controllers/projects/projects.controller.js';
 import {
   validateFormatLoginUser,
@@ -81,11 +82,13 @@ router.get('/get-project-by-id', validateToken, getProjectById);
 router.get('/get-projects-by-id-user', validateToken, getProjectByIdUser);
 
 router.put(
-  '/update-project',
+  '/update-project-by-flag',
   validateToken,
   validateDataProjectBySteps,
-  updateProject
+  updateProjectByFlagController
 );
+
+router.put('/update-project', validateToken, updateProjectController);
 
 router.put('/update-approval-project', validateToken, updateStatusProject);
 
