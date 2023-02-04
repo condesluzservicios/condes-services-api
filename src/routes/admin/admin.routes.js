@@ -36,6 +36,10 @@ import {
   createNewUserForAdmin,
   getUsersByRoleAndCommissionsRoleController,
 } from '../../controllers/users/user.controller.js';
+import {
+  getSettingsController,
+  updateSettingsController,
+} from '../../controllers/settings/settings.controllers.js';
 const router = express.Router();
 
 // users
@@ -80,5 +84,9 @@ router.get('/get-course-by-id', getCourseById);
 router.put('/update-course', validateToken, updateCourse);
 router.delete('/delete-course', validateToken, deleteCourseById);
 router.get('/search-courses', validateToken, searchCourseByTitleAndTeacher);
+
+// settings routes
+router.get('/get-settings', validateToken, getSettingsController);
+router.put('/update-settings', validateToken, updateSettingsController);
 
 export default router;
