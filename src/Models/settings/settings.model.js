@@ -14,7 +14,7 @@ const settingsSchema = new Schema(
       },
       required: false,
     },
-    progress_report_six_months: {
+    progress_report_eight_months: {
       type: {
         file: {
           id: String,

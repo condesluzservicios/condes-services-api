@@ -39,8 +39,8 @@ export const getPaginationAllProjects = async (req, res) => {
 
 export const getProjectById = async (req, res) => {
   const { id } = req.query;
-  const projectsList = await services.getProjectById(id);
-  res.json(projectsList);
+  const projectsSelected = await services.getProjectById(id);
+  res.json(projectsSelected);
 };
 
 export const getProjectByIdUser = async (req, res) => {

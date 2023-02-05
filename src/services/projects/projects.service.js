@@ -1,6 +1,6 @@
 import ProjectsModel from '../../Models/projects/projects.model.js';
 import ParticipantsModel from '../../Models/projects/projectParticipants.model.js';
-import { typesProjects, typesProjectsKeys } from '../../constants/entities.js';
+import { typesProjectsKeys } from '../../constants/entities.js';
 import { constants } from '../../constants/pagination.constants.js';
 import * as projectsRepository from '../../repositories/projects.repositories/projects.repository.js';
 import { getUserByIdRepository } from '../../repositories/users.repositories/users.repository.js';
@@ -9,6 +9,7 @@ import { generateSequentialNumberProgramAndProject } from '../../utils/projects.
 import connectMailer from '../../mail/config.js';
 import { formatEmailNotificationAssignmentProjectToEvaluator } from '../../mail/documents/registeredProject.js';
 import { statusProgramsAndProject } from '../../constants/entities.js';
+import { getSettings } from '../../repositories/settings.repositories/settings.repository.js';
 
 export const createNewProject = async (data) => {
   try {
@@ -49,12 +50,24 @@ export const getPaginationAllProjects = async (skip = 0, flag) => {
 
 export const getProjectById = async (idProject) => {
   try {
-    const ProjectsList = await projectsRepository.getProjectById(idProject);
+    const Project = await projectsRepository.getProjectById(idProject);
+
+    const formats = await getSettings();
+
+    const data = {
+      ...Project,
+      formats: { ...formats[0] },
+    };
+
+    const cleanData = {
+      ...data._doc,
+      formats: { ...data.formats._doc },
+    };
 
     return {
       msg: 'Lista de proyecto',
       success: true,
-      data: ProjectsList,
+      data: cleanData,
     };
   } catch (error) {
     console.log('error al obtener proyecto ->', error);
