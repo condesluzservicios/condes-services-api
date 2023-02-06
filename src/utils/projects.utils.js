@@ -1,3 +1,4 @@
+import { formatInTimeZone } from 'date-fns-tz';
 import { typesProjects } from '../constants/entities.js';
 
 /**
@@ -46,4 +47,15 @@ export const generateSequentialNumberProgramAndProject = (
   let withoutLast = split.slice(0, split.length - wildcard);
   withoutLast.push(String(last_number));
   return serial + withoutLast.join().replace(/,/g, '');
+};
+
+export const getCurrentTimeZoneDate = (
+  timezone = 'America/Caracas',
+  format = 'yyyy-MM-dd HH:mm:ssXXX'
+) => {
+  const today = new Date();
+  const newDate = new Date(
+    formatInTimeZone(today, timezone, format)
+  ).toISOString();
+  return newDate;
 };

@@ -6,6 +6,7 @@ import express from 'express';
 import cors from 'cors';
 import { connectionDB } from './database/connection.js';
 import router from './routes/index.js';
+import { migrationsExec } from './migrations/settings.migrations.js';
 const app = express();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -33,4 +34,5 @@ app.use('/api', router);
 app.listen(app.get('PORT'), async () => {
   await connectionDB();
   console.log('server listen on port', app.get('PORT'));
+  await migrationsExec();
 });

@@ -43,6 +43,7 @@ const userSchema = new Schema(
       type: Number,
       required: false,
       unique: true,
+      default: 0,
     },
     expertise_area: {
       type: String,
