@@ -1,15 +1,18 @@
 import ProjectsModel from '../../Models/projects/projects.model.js';
 import ParticipantsModel from '../../Models/projects/projectParticipants.model.js';
 import { typesProjectsKeys } from '../../constants/entities.js';
-import { constants } from '../../constants/pagination.constants.js';
+import * as emailsService from '../../services/emails/emails.service.js';
 import * as projectsRepository from '../../repositories/projects.repositories/projects.repository.js';
 import { getUserByIdRepository } from '../../repositories/users.repositories/users.repository.js';
-import * as emailsService from '../../services/emails/emails.service.js';
-import { generateSequentialNumberProgramAndProject } from '../../utils/projects.utils.js';
+import { getSettings } from '../../repositories/settings.repositories/settings.repository.js';
+import { constants } from '../../constants/pagination.constants.js';
+import { statusProgramsAndProject } from '../../constants/entities.js';
+import {
+  generateSequentialNumberProgramAndProject,
+  getCurrentTimeZoneDate,
+} from '../../utils/projects.utils.js';
 import connectMailer from '../../mail/config.js';
 import { formatEmailNotificationAssignmentProjectToEvaluator } from '../../mail/documents/registeredProject.js';
-import { statusProgramsAndProject } from '../../constants/entities.js';
-import { getSettings } from '../../repositories/settings.repositories/settings.repository.js';
 
 export const createNewProject = async (data) => {
   try {
@@ -225,34 +228,33 @@ export const updateApprovalProject = async (data) => {
       !projectSelected?.grant_application_for_project_approval
     ) {
       return {
-        msg: 'Debe proporcionar una solicitud de subvencion.',
+        message: 'Debe proporcionar una solicitud de subvencion.',
         success: false,
         data: [],
       };
     }
 
+    const dataToUpdated = data.isApproval
+      ? {
+          status_project: data.isApproval
+            ? statusProgramsAndProject.approved
+            : statusProgramsAndProject.disapproved,
+          approval_date: getCurrentTimeZoneDate(),
+        }
+      : {
+          status_project: data.isApproval
+            ? statusProgramsAndProject.approved
+            : statusProgramsAndProject.disapproved,
+        };
+
     const statusProjectUpdated = await projectsRepository.updateProject(
       data.id,
-      {
-        status_project: data.isApproval
-          ? statusProgramsAndProject.approved
-          : statusProgramsAndProject.disapproved,
-      }
+      dataToUpdated
     );
-
-    // ProjectsModel.findByIdAndUpdate(
-    //   data.id,
-    //   {
-    //     status_project: data.isApproval
-    //       ? statusProgramsAndProject.approved
-    //       : statusProgramsAndProject.disapproved,
-    //   },
-    //   { upsert: true }
-    // );
 
     if (!statusProjectUpdated) {
       return {
-        msg: 'Error al actualizar proyecto',
+        message: 'Error al actualizar proyecto',
         success: false,
         data: [],
       };
@@ -268,12 +270,12 @@ export const updateApprovalProject = async (data) => {
     if (notification?.success) {
       return {
         success: true,
-        msg: 'Proyecto actualizado exitosamente.',
+        message: 'Proyecto actualizado exitosamente.',
         data: notification,
       };
     } else {
       return {
-        msg: 'Error al actualizar proyecto',
+        message: 'Error al actualizar proyecto',
         success: false,
         data: [],
       };
@@ -284,7 +286,7 @@ export const updateApprovalProject = async (data) => {
       error
     );
     return {
-      msg: 'Error al actualizar estado del proyecto',
+      message: 'Error al actualizar estado del proyecto',
       success: false,
       data: [],
     };

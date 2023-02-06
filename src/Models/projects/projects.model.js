@@ -271,6 +271,11 @@ const registerProjectsSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'users',
     },
+
+    approval_date: {
+      type: Date,
+      required: false,
+    },
   },
   {
     timestamps: true,

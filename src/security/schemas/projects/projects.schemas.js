@@ -115,29 +115,47 @@ export const registerProjectsStepTwoSchema = yup.object().shape({
 export const registerProjectsStepThreeSchema = yup.object().shape({
   project_summary: yup
     .string()
-    .matches(/^[a-zA-Zá-üÁ-Ü;,.0-9 ]+$/, 'Introduzca un resumen de proyecto.')
+    .typeError('Resumen del proyecto es requerido.')
+    // .matches(
+    //   /^[a-zA-Zá-üÁ-Ü0-9!¡"#$%&/()=¿?´+~*;,. ]+$/,
+    //   'Introduzca un resumen de proyecto.'
+    // )
     .required('Resumen del proyecto es requerido.'),
   general_objective: yup
     .string()
-    .matches(/^[a-zA-Zá-üÁ-Ü;,.0-9 ]+$/, 'Introduzca un objetivo general.')
+    .typeError('Introduzca un objetivo general.')
+    // .matches(
+    //   /^[a-zA-Zá-üÁ-Ü0-9!¡"#$%&/()-=¿?´+~*;,. ]+$/,
+    //   'Introduzca un objetivo general.'
+    // )
     .required('Objetivo general es requerido.'),
   specific_objectives: yup
     .string()
-    .matches(/^[a-zA-Zá-üÁ-Ü;,.0-9 ]+$/, 'Introduzca objetivos especificos.')
+    .typeError('Introduzca objetivos especificos.')
+    // .matches(
+    //   /^[a-zA-Zá-üÁ-Ü0-9!¡"#$%&/()=¿?´+~*;,. ]+$/,
+    //   'Introduzca objetivos especificos.'
+    // )
     .required('Objetivos especificos son requeridos.'),
   // hypothesis: yup
   //   .string()
-  //   .matches(/^[a-zA-Zá-üÁ-Ü;,.0-9 ]+$/, 'Introduzca una hipotesís especificos.'),
+  //   .matches(/^[a-zA-Zá-üÁ-Ü ]+$/, 'Introduzca una hipotesís especificos.')
+  //   .notRequired(),
   methodology_used: yup
     .string()
-    .matches(/^[a-zA-Zá-üÁ-Ü;,.0-9 ]+$/, 'Introduzca una metodología valida.')
+    .typeError('Introduzca una metodología valida.')
+    // .matches(
+    //   /^[a-zA-Zá-üÁ-Ü0-9!¡"#$%&/()=¿?´+~*;,. ]+$/,
+    //   'Introduzca una metodología valida.'
+    // )
     .required('Metodología es requerida.'),
   feasibility_research: yup
     .string()
-    .matches(
-      /^[a-zA-Zá-üÁ-Ü;,.0-9 ]+$/,
-      'Debe ingresar la viabilidad del proyecto.'
-    )
+    .typeError('Debe ingresar la viabilidad del proyecto.')
+    // .matches(
+    //   /^[a-zA-Zá-üÁ-Ü0-9!¡"#$%&/()=¿?´+~*;,. ]+$/,
+    //   'Debe ingresar la viabilidad del proyecto.'
+    // )
     .required('La viabilidad del proyecto es requerida.'),
   // chronogram_activities: yup
   //   .string()

@@ -1,3 +1,5 @@
+import { statusProgramsAndProject } from '../../constants/entities.js';
+
 // <p><b>Área del proyecto:</b> ${data.project_area}</p>
 export const formatEmailRegisteredProject = (data) => {
   const format = `<main style="font-family: Arial, Helvetica, sans-serif;background-color:gainsboro; display: flex; justify-content:center; align-items: center; flex-direction:column; margin:0px;">
@@ -70,8 +72,16 @@ export const formatEmailRegisteredProject = (data) => {
     <p><b>Viabilidad y aplicabilidad de los resultados:</b> ${
       data.feasibility_research
     }</p>
+    <p>
+      <a target={'_blank'} rel="noreferrer" href="${
+        data.chronogram_activities.file.url
+      }">
+        <b>
+          Cronograma de actividades
+        </b>
+      </a>    
+    </p>
 
-    <p><b>Cronograma de actividades:</b> ${data.chronogram_activities}</p>
     <br>
     <div>
       <h2>Documentos</h2>
@@ -114,9 +124,14 @@ export const formatEmailNotificationApprovalProject = (data, unApproval) => {
   <h1>Información de actualización de proyecto ${data.title}.</h1>
 
   <div>
-    <p>El proyecto con id <b>${data.program_code}</b> ha sido ${
+    <p>El proyecto con id <b>${data.project_code}</b> ha sido ${
     data.status_project
   }.</p>
+
+  ${
+    data.status_project === statusProgramsAndProject.approved &&
+    '<p>Usted cuenta con quince(15) días hábiles para notificar la fecha de inicio. En su defecto notificar los motivos por los cuales no se puede iniciar.</p>'
+  }
 
     ${
       unApproval
@@ -179,8 +194,16 @@ export const formatEmailNotificationApprovalProject = (data, unApproval) => {
     <p><b>Viabilidad y aplicabilidad de los resultados:</b> ${
       data.feasibility_research
     }</p>
+    <p>
+      <a target={'_blank'} rel="noreferrer" href="${
+        data.chronogram_activities.file.url
+      }">
+        <b>
+          Cronograma de actividades
+        </b>
+      </a>
+    </p>
 
-    <p><b>Cronograma de actividades:</b> ${data.chronogram_activities}</p>
     <br>
     <h4>Atentamente el equipo de CONDES.</h4>
   </div>
