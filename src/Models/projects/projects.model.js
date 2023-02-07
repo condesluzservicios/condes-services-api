@@ -195,7 +195,6 @@ const registerProjectsSchema = new Schema(
     project_code: {
       type: String,
       required: false,
-      unique: true,
     },
 
     // * step three
