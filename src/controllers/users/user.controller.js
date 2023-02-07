@@ -86,6 +86,8 @@ export const getDataUser = async (req, res) => {
     result.id = element._id;
     result.name = element.name;
     result.last_name = element.last_name;
+    result.type_identification = element.type_identification;
+    result.identification_number = element.identification_number;
     result.email = element.email;
     result.cod_number = element?.cod_number ? element?.cod_number : '+';
     result.phone = element?.phone ? element?.phone : '';
