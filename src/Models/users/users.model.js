@@ -39,6 +39,10 @@ const userSchema = new Schema(
     },
 
     // * evaluator / coordinator
+    type_identification: {
+      type: String,
+      required: false,
+    },
     identification_number: {
       type: Number,
       required: false,
