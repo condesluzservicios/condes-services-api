@@ -276,6 +276,16 @@ const registerProjectsSchema = new Schema(
       type: Date,
       required: false,
     },
+
+    start_date_selected: {
+      type: Date,
+      required: false,
+    },
+    reason_to_not_start: {
+      type: String,
+      required: false,
+      default: '',
+    },
   },
   {
     timestamps: true,
