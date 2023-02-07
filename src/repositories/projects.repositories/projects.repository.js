@@ -278,6 +278,6 @@ export const updateProject = async (id_project, projectData) => {
     return projectUpdated;
   } catch (error) {
     console.log(`Error al actualizar proyecto. ${error}`);
-    // throw new Error('Error al actualizar proyecto.');
+    return null;
   }
 };

@@ -39,10 +39,15 @@ const userSchema = new Schema(
     },
 
     // * evaluator / coordinator
+    type_identification: {
+      type: String,
+      required: false,
+    },
     identification_number: {
       type: Number,
       required: false,
       unique: true,
+      default: 0,
     },
     expertise_area: {
       type: String,

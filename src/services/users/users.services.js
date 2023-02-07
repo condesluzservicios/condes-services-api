@@ -1,21 +1,23 @@
 import * as userRepository from '../../repositories/users.repositories/users.repository.js';
 import { createHash } from '../../security/users/passwords.js';
+import { getAleIdent } from '../../utils/users.utils.js';
 
 export const SaveNewUser = async (data) => {
   try {
     const newPassword = await createHash(data.password);
     data.password = newPassword;
+    data.identification_number = getAleIdent();
 
     const userSaved = await userRepository.createNewUserRepository(data);
     return {
-      msg: 'New user saved',
+      msg: 'Nuevo usuario guardado',
       success: true,
       data: { userID: userSaved._id, date: userSaved.createdAt },
     };
   } catch (error) {
     console.log('err to save new user', error);
     return {
-      msg: 'Error to save new user',
+      msg: 'Error al registrar nuevo usuario.',
       success: false,
       data: error,
     };

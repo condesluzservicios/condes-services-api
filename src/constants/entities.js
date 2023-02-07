@@ -9,6 +9,11 @@ export const typesProjects = {
   financiado: 'FI-',
   asociado: 'AS-',
 };
+export const typesProjectsKeys = {
+  'no financiado': 'no financiado',
+  financiado: 'financiado',
+  asociado: 'asociado',
+};
 
 export const userRoles = {
   admin: 'admin',

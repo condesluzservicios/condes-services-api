@@ -168,6 +168,16 @@ const registerProjectsSchema = new Schema(
       },
       required: false,
     },
+    grant_application_for_project_approval: {
+      type: {
+        file: {
+          id: String,
+          url: String,
+        },
+        name: String,
+      },
+      required: false,
+    },
 
     // * end financed
 
@@ -260,6 +270,21 @@ const registerProjectsSchema = new Schema(
     assigned_to: {
       type: Schema.Types.ObjectId,
       ref: 'users',
+    },
+
+    approval_date: {
+      type: Date,
+      required: false,
+    },
+
+    start_date_selected: {
+      type: Date,
+      required: false,
+    },
+    reason_to_not_start: {
+      type: String,
+      required: false,
+      default: '',
     },
   },
   {

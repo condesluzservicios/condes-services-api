@@ -1,13 +1,18 @@
 import ProjectsModel from '../../Models/projects/projects.model.js';
 import ParticipantsModel from '../../Models/projects/projectParticipants.model.js';
-import { constants } from '../../constants/pagination.constants.js';
+import { typesProjectsKeys } from '../../constants/entities.js';
+import * as emailsService from '../../services/emails/emails.service.js';
 import * as projectsRepository from '../../repositories/projects.repositories/projects.repository.js';
 import { getUserByIdRepository } from '../../repositories/users.repositories/users.repository.js';
-import * as emailsService from '../../services/emails/emails.service.js';
-import { generateSequentialNumberProgramAndProject } from '../../utils/projects.utils.js';
+import { getSettings } from '../../repositories/settings.repositories/settings.repository.js';
+import { constants } from '../../constants/pagination.constants.js';
+import { statusProgramsAndProject } from '../../constants/entities.js';
+import {
+  generateSequentialNumberProgramAndProject,
+  getCurrentTimeZoneDate,
+} from '../../utils/projects.utils.js';
 import connectMailer from '../../mail/config.js';
 import { formatEmailNotificationAssignmentProjectToEvaluator } from '../../mail/documents/registeredProject.js';
-import { statusProgramsAndProject } from '../../constants/entities.js';
 
 export const createNewProject = async (data) => {
   try {
@@ -48,12 +53,24 @@ export const getPaginationAllProjects = async (skip = 0, flag) => {
 
 export const getProjectById = async (idProject) => {
   try {
-    const ProjectsList = await projectsRepository.getProjectById(idProject);
+    const Project = await projectsRepository.getProjectById(idProject);
+
+    const formats = await getSettings();
+
+    const data = {
+      ...Project,
+      formats: { ...formats[0] },
+    };
+
+    const cleanData = {
+      ...data._doc,
+      formats: { ...data.formats._doc },
+    };
 
     return {
       msg: 'Lista de proyecto',
       success: true,
-      data: ProjectsList,
+      data: cleanData,
     };
   } catch (error) {
     console.log('error al obtener proyecto ->', error);
@@ -204,19 +221,40 @@ export const updateProject = async (data, flag = '') => {
 
 export const updateApprovalProject = async (data) => {
   try {
-    const statusProjectUpdated = await ProjectsModel.findByIdAndUpdate(
+    const projectSelected = await projectsRepository.getProjectById(data.id);
+
+    if (
+      projectSelected?.type_project === typesProjectsKeys.financiado &&
+      !projectSelected?.grant_application_for_project_approval
+    ) {
+      return {
+        message: 'Debe proporcionar una solicitud de subvencion.',
+        success: false,
+        data: [],
+      };
+    }
+
+    const dataToUpdated = data.isApproval
+      ? {
+          status_project: data.isApproval
+            ? statusProgramsAndProject.approved
+            : statusProgramsAndProject.disapproved,
+          approval_date: getCurrentTimeZoneDate(),
+        }
+      : {
+          status_project: data.isApproval
+            ? statusProgramsAndProject.approved
+            : statusProgramsAndProject.disapproved,
+        };
+
+    const statusProjectUpdated = await projectsRepository.updateProject(
       data.id,
-      {
-        status_project: data.isApproval
-          ? statusProgramsAndProject.approved
-          : statusProgramsAndProject.disapproved,
-      },
-      { upsert: true }
+      dataToUpdated
     );
 
     if (!statusProjectUpdated) {
       return {
-        msg: 'Error al actualizar proyecto',
+        message: 'Error al actualizar proyecto',
         success: false,
         data: [],
       };
@@ -232,12 +270,12 @@ export const updateApprovalProject = async (data) => {
     if (notification?.success) {
       return {
         success: true,
-        msg: 'Proyecto actualizado exitosamente.',
+        message: 'Proyecto actualizado exitosamente.',
         data: notification,
       };
     } else {
       return {
-        msg: 'Error al actualizar proyecto',
+        message: 'Error al actualizar proyecto',
         success: false,
         data: [],
       };
@@ -248,7 +286,7 @@ export const updateApprovalProject = async (data) => {
       error
     );
     return {
-      msg: 'Error al actualizar estado del proyecto',
+      message: 'Error al actualizar estado del proyecto',
       success: false,
       data: [],
     };
