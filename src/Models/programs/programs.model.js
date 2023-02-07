@@ -124,7 +124,6 @@ const ProgramSchema = new Schema(
     program_code: {
       type: String,
       required: false,
-      unique: true,
     },
     created_by: {
       type: Schema.Types.ObjectId,
