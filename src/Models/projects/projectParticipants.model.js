@@ -72,6 +72,28 @@ const projectparticipantsSchema = new Schema(
       type: Number,
       required: false,
     },
+
+    // * documents
+    curriculum_vitae_teaching_staff: {
+      type: {
+        file: {
+          id: String,
+          url: String,
+        },
+        name: String,
+      },
+      required: false,
+    },
+    letters_dedication_personnel_hours: {
+      type: {
+        file: {
+          id: String,
+          url: String,
+        },
+        name: String,
+      },
+      required: false,
+    },
   },
   {
     timestamps: true,
