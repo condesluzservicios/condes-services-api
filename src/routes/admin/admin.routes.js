@@ -57,7 +57,6 @@ router.get(
 
 // news
 router.post('/create-news', validateToken, createNewNews);
-
 router.get('/get-all-news', getAllNews);
 router.get('/get-news-pagination', getNewsPagination);
 router.get('/get-mews-by-id', getNewsById);
