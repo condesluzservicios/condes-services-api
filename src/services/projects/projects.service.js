@@ -384,7 +384,7 @@ export const assignProjectsToEvaluators = async (
         formatEmailNotificationAssignmentProjectToEvaluator(projectSelected),
     });
 
-    if (!notification.accepted.length > 0) {
+    if (!notification?.accepted?.length > 0) {
       return {
         msg: 'Proyecto asignado exitosamente. Error al enviar correo de asignación de proyecto.',
         success: true,
